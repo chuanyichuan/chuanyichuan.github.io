@@ -17,20 +17,20 @@
   <meta http-equiv="window-target" content="_top">
   
   
-  <title>串一串</title>
-  <meta name="description" content="Percona-xtrabackup使用详解与原理 ####–基于Percona-xtrabackup实现MySQL自动备份和恢复指导手册  一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is">
+  <title>Percona-xtrabackup备份MySQL使用详解与原理 | 串一串</title>
+  <meta name="description" content="一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is an open-source hot backup utility for MySQL - based servers that doesn">
 <meta property="og:type" content="article">
-<meta property="og:title" content="串一串">
+<meta property="og:title" content="Percona-xtrabackup备份MySQL使用详解与原理">
 <meta property="og:url" content="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/index.html">
 <meta property="og:site_name" content="串一串">
-<meta property="og:description" content="Percona-xtrabackup使用详解与原理 ####–基于Percona-xtrabackup实现MySQL自动备份和恢复指导手册  一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is">
+<meta property="og:description" content="一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is an open-source hot backup utility for MySQL - based servers that doesn">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/innobackupex%E5%92%8Cxtrabackup%E4%BA%A4%E4%BA%92%E5%92%8C%E5%8D%8F%E8%B0%83%E8%BF%87%E7%A8%8B.png">
-<meta property="og:updated_time" content="2021-03-17T03:45:12.043Z">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210420221252727.png">
+<meta property="og:updated_time" content="2021-04-20T14:13:50.003Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="串一串">
-<meta name="twitter:description" content="Percona-xtrabackup使用详解与原理 ####–基于Percona-xtrabackup实现MySQL自动备份和恢复指导手册  一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is">
-<meta name="twitter:image" content="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/innobackupex%E5%92%8Cxtrabackup%E4%BA%A4%E4%BA%92%E5%92%8C%E5%8D%8F%E8%B0%83%E8%BF%87%E7%A8%8B.png">
+<meta name="twitter:title" content="Percona-xtrabackup备份MySQL使用详解与原理">
+<meta name="twitter:description" content="一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is an open-source hot backup utility for MySQL - based servers that doesn">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/image-20210420221252727.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/index.html">
   
@@ -192,7 +192,7 @@
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">43</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernates/">Kubernates</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">43</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernates/">Kubernates</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -297,13 +297,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
               </p>
               <p class="item-title">
-                <a href="" class="title">(no title)</a>
+                <a href="" class="title">Percona-xtrabackup备份MySQL使用详解与原理</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-03-17T02:02:15.064Z" itemprop="datePublished">2021-03-17</time>
+                <time datetime="2021-03-17T04:22:00.000Z" itemprop="datePublished">2021-03-17</time>
               </p>
             </div>
           </li>
@@ -375,14 +375,27 @@
     
     <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Percona-xtrabackup备份MySQL使用详解与原理
+    </h1>
+  
+
+      
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
 	<a href="" class="article-date">
-	  <time datetime="2021-03-17T02:02:15.064Z" itemprop="datePublished">2021-03-17</time>
+	  <time datetime="2021-03-17T04:22:00.000Z" itemprop="datePublished">2021-03-17</time>
 	</a>
 </span>
         
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="../../../../categories/MySQL/">MySQL</a>
+  </span>
+
         
 
         
@@ -407,9 +420,7 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h1 id="percona-xtrabackup使用详解与原理"><a class="markdownIt-Anchor" href="#percona-xtrabackup使用详解与原理"></a> Percona-xtrabackup使用详解与原理</h1>
-<p>####–<strong>基于Percona-xtrabackup实现MySQL自动备份和恢复指导手册</strong></p>
-<h2 id="一-percona-xtrabackup介绍"><a class="markdownIt-Anchor" href="#一-percona-xtrabackup介绍"></a> 一、Percona-xtrabackup介绍</h2>
+        <h2 id="一-percona-xtrabackup介绍"><a class="markdownIt-Anchor" href="#一-percona-xtrabackup介绍"></a> 一、Percona-xtrabackup介绍</h2>
 <p>以下文档来自官网介绍（<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/index.html%EF%BC%89%EF%BC%8C%E5%B9%B6%E7%BB%8F%E8%BF%87%E7%AE%80%E5%8D%95%E7%BF%BB%E8%AF%91%E3%80%82" target="_blank" rel="noopener">https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。</a></p>
 <blockquote>
 <p><code>Percona xtrabackup</code> is an open-source hot backup utility for MySQL - based servers that doesn’t lock your database during the backup.</p>
@@ -487,7 +498,7 @@
 <p>xbcrypt 是加解密用的；xbstream 类似于tar，是 Percona 自己实现的一种支持并发写的流文件格式。两都在备份和解压时都会用到（如果备份用了加密和并发）。</p>
 </blockquote>
 <p>备份时<code>innobackupex</code>和<code>xtrabackup</code>交互和协调过程</p>
-<p><img src="innobackupex%E5%92%8Cxtrabackup%E4%BA%A4%E4%BA%92%E5%92%8C%E5%8D%8F%E8%B0%83%E8%BF%87%E7%A8%8B.png" alt="image-20210317102115281"></p>
+<p><img src="/images/image-20210420221252727.png" alt="innobackupex和xtrabackup交互和协调过程"></p>
 <blockquote>
 <ol>
 <li>
@@ -591,7 +602,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/" title="" target="_blank" rel="external">http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/</a>
+      <a href="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/" title="Percona-xtrabackup备份MySQL使用详解与原理" target="_blank" rel="external">http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/</a>
     </li>
     
     <li class="post-copyright-license">
