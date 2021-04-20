@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://chuanyichuan.github.io/2021/04/01/k8s%E5%88%A0%E9%99%A4namespace%E6%8F%90%E7%A4%BATerminating/</loc>
+    <lastmod>2021-04-20</lastmod>
+  </url>  <url>
+    <loc>http://chuanyichuan.github.io/2021/04/20/%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E4%B8%80/</loc>
+    <lastmod>2021-04-20</lastmod>
+  </url>  <url>
+    <loc>http://chuanyichuan.github.io/2021/02/18/Redis%20Cluster%E5%9C%A8Master%E8%8A%82%E7%82%B9fail%E5%90%8E%E6%9C%AA%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E4%B8%BB%E5%A4%87/</loc>
+    <lastmod>2021-04-20</lastmod>
+  </url>  <url>
     <loc>http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%8E%9F%E7%90%86/</loc>
     <lastmod>2021-04-20</lastmod>
   </url>  <url>
@@ -15,9 +24,6 @@
   </url>  <url>
     <loc>http://chuanyichuan.github.io/2020/07/31/Java%E7%BA%BF%E4%B8%8A%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E6%96%B9%E6%A1%88/</loc>
     <lastmod>2021-04-11</lastmod>
-  </url>  <url>
-    <loc>http://chuanyichuan.github.io/2021/04/01/k8s%E5%88%A0%E9%99%A4namespace%E6%8F%90%E7%A4%BATerminating/</loc>
-    <lastmod>2021-04-08</lastmod>
   </url>  <url>
     <loc>http://chuanyichuan.github.io/2020/04/16/Git%E5%88%87%E6%8D%A2%E5%9B%9E%E6%9F%90%E4%B8%AAcommit/</loc>
     <lastmod>2021-03-11</lastmod>
@@ -78,9 +84,6 @@
   </url>  <url>
     <loc>http://chuanyichuan.github.io/2021/01/27/%E6%9C%8D%E5%8A%A1%E5%99%A8Load%E8%BF%87%E9%AB%98%E6%8E%92%E6%9F%A5%E6%89%8B%E5%86%8C/</loc>
     <lastmod>2021-02-25</lastmod>
-  </url>  <url>
-    <loc>http://chuanyichuan.github.io/2021/02/18/Redis%20Cluster%E5%9C%A8Master%E8%8A%82%E7%82%B9fail%E5%90%8E%E6%9C%AA%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E4%B8%BB%E5%A4%87/</loc>
-    <lastmod>2021-02-19</lastmod>
   </url>  <url>
     <loc>http://chuanyichuan.github.io/2020/07/05/%E6%9D%A5%E8%81%8A%E8%81%8AJDK%E9%9B%86%E5%90%88%E7%B1%BB/</loc>
     <lastmod>2021-02-06</lastmod>
@@ -559,10 +562,10 @@
     <loc>http://chuanyichuan.github.io/2019/10/22/git%20stash%E5%91%BD%E4%BB%A4/</loc>
     <lastmod>2019-10-24</lastmod>
   </url>  <url>
-    <loc>http://chuanyichuan.github.io/2019/10/23/MongoDB%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/</loc>
+    <loc>http://chuanyichuan.github.io/2019/10/23/MongoDB%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99java.lang.NoSuchFieldError-ACKNOWLEDGED/</loc>
     <lastmod>2019-10-24</lastmod>
   </url>  <url>
-    <loc>http://chuanyichuan.github.io/2019/10/23/MongoDB%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99java.lang.NoSuchFieldError-ACKNOWLEDGED/</loc>
+    <loc>http://chuanyichuan.github.io/2019/10/23/MongoDB%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/</loc>
     <lastmod>2019-10-24</lastmod>
   </url>  <url>
     <loc>http://chuanyichuan.github.io/2019/10/24/MongoDB%E7%9B%91%E6%8E%A7%E3%80%81%E5%88%86%E7%89%87%E5%8F%8A%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D/</loc>
