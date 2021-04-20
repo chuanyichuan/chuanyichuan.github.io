@@ -18,13 +18,13 @@
   
   
   <title>Spring Cloud全家桶初探 | 串一串</title>
-  <meta name="description" content="什么是Spring Cloud 官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。  Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Cloud是一个基于">
+  <meta name="description" content="[Toc]  什么是Spring Cloud 官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。  Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Clou">
 <meta name="keywords" content="SpringCloud">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Cloud全家桶初探">
 <meta property="og:url" content="http://chuanyichuan.github.io/2020/04/01/SpringCloud全家桶初探/index.html">
 <meta property="og:site_name" content="串一串">
-<meta property="og:description" content="什么是Spring Cloud 官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。  Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Cloud是一个基于">
+<meta property="og:description" content="[Toc]  什么是Spring Cloud 官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。  Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Clou">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/image-20200402211128777.png">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/consol_service.png">
@@ -32,10 +32,10 @@
 <meta property="og:image" content="http://chuanyichuan.github.io/images/image-20200402170513327.png">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/e9998448e095176c2454fafd66ea57ab1511332.png">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/rule.png">
-<meta property="og:updated_time" content="2020-06-19T15:45:44.448Z">
+<meta property="og:updated_time" content="2021-04-20T13:49:52.970Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud全家桶初探">
-<meta name="twitter:description" content="什么是Spring Cloud 官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。  Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Cloud是一个基于">
+<meta name="twitter:description" content="[Toc]  什么是Spring Cloud 官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。  Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Clou">
 <meta name="twitter:image" content="http://chuanyichuan.github.io/images/image-20200402211128777.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://chuanyichuan.github.io/2020/04/01/SpringCloud全家桶初探/index.html">
@@ -198,7 +198,7 @@
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">43</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">9</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">43</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernates/">Kubernates</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -208,7 +208,7 @@
   <div class="widget">
     <h3 class="widget-title">标签</h3>
     <div class="widget-body">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">4</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Seata/">Seata</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式事务/">分布式事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -218,7 +218,7 @@
   <div class="widget">
     <h3 class="widget-title">标签云</h3>
     <div class="widget-body tagcloud">
-      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.2px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/JVM/" style="font-size: 13.4px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.2px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.4px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.2px;">MySQL</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.2px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.8px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.2px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/阿里/" style="font-size: 13.2px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.6px;">面试</a>
+      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.2px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/JVM/" style="font-size: 13.4px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.2px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.4px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.2px;">MySQL</a> <a href="../../../../tags/Redis/" style="font-size: 13px;">Redis</a> <a href="../../../../tags/Seata/" style="font-size: 13px;">Seata</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13.2px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.2px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.8px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/分布式事务/" style="font-size: 13px;">分布式事务</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.2px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/阿里/" style="font-size: 13.2px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.6px;">面试</a>
     </div>
   </div>
 
@@ -227,7 +227,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">51</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -242,7 +242,7 @@
           <li>
             
             <div class="item-thumb">
-              <a href="../../../../2021/02/06/MySQL之my.cnf配置信息/" class="thumb">
+              <a href="../../../../2021/04/20/seata 分布式事务(AT模式)应用/" class="thumb">
     
     
         <span class="thumb-image thumb-none"></span>
@@ -253,13 +253,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+                <a class="category-link" href="../../../../categories/分布式/">分布式</a>
               </p>
               <p class="item-title">
-                <a href="../../../../2021/02/06/MySQL之my.cnf配置信息/" class="title">MySQL之my.cnf配置信息</a>
+                <a href="../../../../2021/04/20/seata 分布式事务(AT模式)应用/" class="title">Seata分布式事务(AT模式)粗讲</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-02-05T16:00:00.000Z" itemprop="datePublished">2021-02-06</time>
+                <time datetime="2021-04-20T12:00:00.000Z" itemprop="datePublished">2021-04-20</time>
               </p>
             </div>
           </li>
@@ -267,7 +267,7 @@
           <li>
             
             <div class="item-thumb">
-              <a href="../../../../2021/02/05/MySQL修改启动端口无效/" class="thumb">
+              <a href="../../../../2021/04/01/k8s删除namespace提示Terminating/" class="thumb">
     
     
         <span class="thumb-image thumb-none"></span>
@@ -278,13 +278,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+                <a class="category-link" href="../../../../categories/Kubernates/">Kubernates</a>
               </p>
               <p class="item-title">
-                <a href="../../../../2021/02/05/MySQL修改启动端口无效/" class="title">MySQL修改启动端口无效</a>
+                <a href="../../../../2021/04/01/k8s删除namespace提示Terminating/" class="title">k8s删除namespace提示Terminating</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-02-05T15:16:00.000Z" itemprop="datePublished">2021-02-05</time>
+                <time datetime="2021-04-01T09:33:00.000Z" itemprop="datePublished">2021-04-01</time>
               </p>
             </div>
           </li>
@@ -292,7 +292,7 @@
           <li>
             
             <div class="item-thumb">
-              <a href="../../../../2021/01/27/服务器Load过高排查手册/" class="thumb">
+              <a href="../../../../2021/03/17/Percona-XtraBackup使用详解与原理/" class="thumb">
     
     
         <span class="thumb-image thumb-none"></span>
@@ -303,13 +303,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="../../../../categories/杂谈/">杂谈</a>
+                
               </p>
               <p class="item-title">
-                <a href="../../../../2021/01/27/服务器Load过高排查手册/" class="title">服务器Load过高排查手册</a>
+                <a href="../../../../2021/03/17/Percona-XtraBackup使用详解与原理/" class="title">(no title)</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-01-27T14:50:00.000Z" itemprop="datePublished">2021-01-27</time>
+                <time datetime="2021-03-17T02:02:15.064Z" itemprop="datePublished">2021-03-17</time>
               </p>
             </div>
           </li>
@@ -317,7 +317,7 @@
           <li>
             
             <div class="item-thumb">
-              <a href="../../../../2021/01/18/MyBatis自定义TypeHandler解决字段映射问题/" class="thumb">
+              <a href="../../../../2021/02/26/SpringBoot接口返回值出现ClassCastException/" class="thumb">
     
     
         <span class="thumb-image thumb-none"></span>
@@ -328,13 +328,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="../../../../categories/MyBatis/">MyBatis</a>
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
               </p>
               <p class="item-title">
-                <a href="../../../../2021/01/18/MyBatis自定义TypeHandler解决字段映射问题/" class="title">MyBatis自定义TypeHandler解决字段映射问题</a>
+                <a href="../../../../2021/02/26/SpringBoot接口返回值出现ClassCastException/" class="title">SpringBoot接口返回值出现ClassCastException</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-01-18T15:22:00.000Z" itemprop="datePublished">2021-01-18</time>
+                <time datetime="2021-02-26T04:50:00.000Z" itemprop="datePublished">2021-02-26</time>
               </p>
             </div>
           </li>
@@ -342,7 +342,7 @@
           <li>
             
             <div class="item-thumb">
-              <a href="../../../../2021/01/16/idea打包Java工程为jar/" class="thumb">
+              <a href="../../../../2021/02/18/Redis Cluster在Master节点fail后未自动切换主备/" class="thumb">
     
     
         <span class="thumb-image thumb-none"></span>
@@ -353,13 +353,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="../../../../categories/杂谈/">杂谈</a>
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
               </p>
               <p class="item-title">
-                <a href="../../../../2021/01/16/idea打包Java工程为jar/" class="title">idea打包Java工程为jar</a>
+                <a href="../../../../2021/02/18/Redis Cluster在Master节点fail后未自动切换主备/" class="title">Redis Cluster在Master节点fail后未自动切换主备</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-01-16T13:56:00.000Z" itemprop="datePublished">2021-01-16</time>
+                <time datetime="2021-02-18T13:50:00.000Z" itemprop="datePublished">2021-02-18</time>
               </p>
             </div>
           </li>
@@ -431,7 +431,8 @@
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h3 id="什么是spring-cloud"><a class="markdownIt-Anchor" href="#什么是spring-cloud"></a> 什么是Spring Cloud</h3>
+        <p>[Toc]</p>
+<h3 id="什么是spring-cloud"><a class="markdownIt-Anchor" href="#什么是spring-cloud"></a> 什么是Spring Cloud</h3>
 <p>官网上面有一段话：Spring Cloud为开发人员提供了快速构建分布式系统中的一些常见模式的工具(例如配置管理、服务发现、断路器、智能路由、微代理、控制总线、一次性令牌、全局锁、领导选举、分布式会话、集群状态)。</p>
 <ul>
 <li>Spring Boot是Spring的一套快速配置脚手架，可以基于Spring Boot快速开发一个微服务应用，而Spring Cloud是一个基于Spring Boot实现云应用的开发工具；</li>
@@ -439,17 +440,13 @@
 <li>Spring Boot使用了约定大于配置的理念，大部分集成方案都预设好了，不需要过多的配置，或者说能不配置就不配置，而Spring Cloud是基于Spring Boot来实现的，也就是说Spring Boot可以独立于Spring Cloud，而Spring Cloud强依赖于Spring Boot。</li>
 </ul>
 <h3 id="什么是微服务"><a class="markdownIt-Anchor" href="#什么是微服务"></a> 什么是微服务</h3>
-<ol>
-<li>
-<p>微服务架构</p>
+<p>####微服务架构</p>
 <ul>
 <li>分散：不同的功能模块部署在不同的服务器/容器中，减轻功能模块高并发带来的压力</li>
 <li>集群：不同服务器/容器中部署相同的功能模块，通过负载均衡服务配置实现功能模块的高可用</li>
 <li>微服务：微服务架构简单来说就是将web应用拆分成一系列小的服务应用，这些应用可以独立的编译、部署，应用之间通过暴露各自的API实现通信，共同组成一个完整的web应用</li>
 </ul>
-</li>
-<li>
-<p>微服务的特点</p>
+<p>####微服务的特点</p>
 <ul>
 <li>单一职责：每一个微服务模块都对应不同的服务功能，负责单一业务的业务实现</li>
 <li>微/细：服务拆分的粒度很小，但依据分久必合合久必分原则，微服务之间也是可以进行再拆分或合并的</li>
@@ -465,9 +462,7 @@
 </ul>
 </li>
 </ul>
-</li>
-<li>
-<p>微服务的劣势</p>
+<p>####微服务的劣势</p>
 <ul>
 <li>微服务使整个应用分散成多个服务应用，定位问题非常困难（trace解决定位难的问题）</li>
 <li>稳定性下降，服务数量过多会导致整个应用出现问题的概率变大，其中一个服务挂掉就可能导致整个应用不可用，访问量越大出问题的可能性越大</li>
@@ -476,9 +471,7 @@
 <li>测试难度增大，由原先的单体应用测试变成服务间调用的测试，测试过程更加复杂</li>
 <li>服务运行过程中可能会经常发生服务宕机，所以对于微服务必须建立完善的服务监控体系，尽可能的第一时间发现故障服务并进行故障通知、转移和恢复（Zookeeper、Eureka、Consul、Etcd等）</li>
 </ul>
-</li>
-<li>
-<p>微服务拆分依据</p>
+<p>####微服务拆分依据</p>
 <p>微服务拆分不是一蹴而就的，而是需要在开发过程中不断的去分析和理清每一个服务的边界。对于老工程中尚未分清拆分方向的，可先留于其中，最终可考虑将这些功能作为一个微服务。</p>
 <ul>
 <li>基于业务逻辑</li>
@@ -486,9 +479,7 @@
 <li>基于可靠性</li>
 <li>基于性能</li>
 </ul>
-</li>
-<li>
-<p>微服务拆分规范</p>
+<p>####微服务拆分规范</p>
 <ul>
 <li>粒度：先少后多，先粗后细</li>
 <li>调用：保持单向调用，尽量禁止循环调用，比如订单—&gt;产品，产品—x&gt;订单</li>
@@ -496,12 +487,8 @@
 <li>纵向拆分尽量少于三层，也即维持在控制层—&gt;业务服务层—&gt;基础服务层</li>
 <li>先拆分服务，后拆分数据库</li>
 </ul>
-</li>
-</ol>
 <h3 id="基础元件"><a class="markdownIt-Anchor" href="#基础元件"></a> 基础元件</h3>
-<ol>
-<li>
-<p>Config</p>
+<p>####Config</p>
 <p>分布式服务，由于服务数量较多，每一个服务都会有1+套配置文件，如果每个项目单独配置一个yml/properties文件，管理起来会很混乱，并且无法实现动态变更配置属性的值，所以我们需要一个分布式配置中心组件，Spring Cloud Config就因此应运而生，它支持配置信息放在配置服务的内存中，也支持放在远程的git/svn仓库中，Config分两个角色，一个Server和一个Client。</p>
 <ul>
 <li>
@@ -600,7 +587,7 @@
 </ol>
 </li>
 </ul>
-</li>
+<ol start="2">
 <li>
 <p>Eureka</p>
 <p>服务注册发现中心，基于CAP理论的AP实现，一个基于REST的服务，用于服务的发现和定位，以实现云端中间层服务发现和故障转移。Eureka的AP原则保证了注册中心的高可用，它是一个去中心化的架构，也就是集群中的所有节点都无主从之分，每一个节点都是平等的，可以相互注册，每一个节点都需要添加一个或多个serviceUrl指向其他节点，每个节点都可以视为其他节点的副本，这一特点实现了Eureka的高可用。</p>
@@ -614,30 +601,40 @@
 <p>如果我们仅仅是部署一个Eureka Server，那么我们还需要修改一下eureka.client前缀的配置</p>
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">eureka.client.register-with-eureka</span>=<span class="string">false</span></span><br><span class="line">  <span class="meta">eureka.client.fetch-registry</span>=<span class="string">false</span></span><br><span class="line"><span class="meta">eureka.client.service-url.defaultZone</span>=<span class="string">http://127.0.0.1:$&#123;server.port&#125;/eureka/</span></span><br></pre></td></tr></table></figure>
 <p>这些配置信息对应的类是在<code>spring-cloud-netflix-eureka-client.jar</code>包中的<code>org.springframework.cloud.netflix.eureka.EurekaClientConfigBean</code>类中，看下这个类中上面三个参数的默认值：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">@ConfigurationProperties</span>(EurekaClientConfigBean.PREFIX)</span><br><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EurekaClientConfigBean</span> <span class="keyword">implements</span> <span class="title">EurekaClientConfig</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line">   <span class="comment">// 默认的eureka客户端配置前缀，就用在上面↑</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PREFIX = <span class="string">"eureka.client"</span>;</span><br><span class="line">   <span class="comment">// Eureka默认的访问地址，如果我们不修改这个配置的话，就可以通过8761端口的这个地址去访问</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_URL = <span class="string">"http://localhost:8761"</span> + DEFAULT_PREFIX</span><br><span class="line"> 			+ <span class="string">"/"</span>;</span><br><span class="line">   <span class="comment">// 如果没设置zone就使用下面这个默认的</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_ZONE = <span class="string">"defaultZone"</span>;</span><br><span class="line"> </span><br><span class="line"> 	<span class="comment">// 指定是否将当前服务注册到Eureka Server以被其他服务发现和使用</span></span><br><span class="line"> 	<span class="comment">// 如果不想使当前应用被其他服务发现，则修改此属性为false</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">boolean</span> registerWithEureka = <span class="keyword">true</span>;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">// 指定当前服务是否从Eureka Server拉取监听的服务列表</span></span><br><span class="line"> 	<span class="keyword">private</span> <span class="keyword">boolean</span> fetchRegistry = <span class="keyword">true</span>;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">// Eureka Server访问地址，一个Map，可以存储很多值</span></span><br><span class="line">   <span class="keyword">private</span> Map&lt;String, String&gt; serviceUrl = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"> 	&#123;</span><br><span class="line">     <span class="comment">// 将默认的server地址放入服务地址Map中</span></span><br><span class="line">		<span class="keyword">this</span>.serviceUrl.put(DEFAULT_ZONE, DEFAULT_URL);</span><br><span class="line"> 	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">@ConfigurationProperties</span>(EurekaClientConfigBean.PREFIX)</span><br><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EurekaClientConfigBean</span> <span class="keyword">implements</span> <span class="title">EurekaClientConfig</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line">   <span class="comment">// 默认的eureka客户端配置前缀，就用在上面↑</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PREFIX = <span class="string">"eureka.client"</span>;</span><br><span class="line">   <span class="comment">// Eureka默认的访问地址，如果我们不修改这个配置的话，就可以通过8761端口的这个地址去访问</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_URL = <span class="string">"http://localhost:8761"</span> + DEFAULT_PREFIX</span><br><span class="line"> 			+ <span class="string">"/"</span>;</span><br><span class="line">   <span class="comment">// 如果没设置zone就使用下面这个默认的</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_ZONE = <span class="string">"defaultZone"</span>;</span><br><span class="line"> </span><br><span class="line"> 	<span class="comment">// 指定是否将当前服务注册到Eureka Server以被其他服务发现和使用</span></span><br><span class="line"> 	<span class="comment">// 如果不想使当前应用被其他服务发现，则修改此属性为false</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">boolean</span> registerWithEureka = <span class="keyword">true</span>;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">// 指定当前服务是否从Eureka Server拉取监听的服务列表</span></span><br><span class="line"> 	<span class="keyword">private</span> <span class="keyword">boolean</span> fetchRegistry = <span class="keyword">true</span>;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">// Eureka Server访问地址，一个Map，可以存储很多值</span></span><br><span class="line">   <span class="keyword">private</span> Map&lt;String, String&gt; serviceUrl = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"> 	&#123;</span><br><span class="line">     <span class="comment">// 将默认的server地址放入服务地址Map中</span></span><br><span class="line">     	<span class="keyword">this</span>.serviceUrl.put(DEFAULT_ZONE, DEFAULT_URL);</span><br><span class="line">&#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li>
 <p>Client：创建一个Eureka Client很简单，在启动类上加上注解<code>@EnableEurekaClient</code>即可，如果Eureka Server服务的端口并不是使用的8761，那么则需要修改一下配置信息：</p>
 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">eureka.client.service-url.defaultZone</span>=<span class="string">http://127.0.0.1:8080/eureka/</span></span><br></pre></td></tr></table></figure>
 <p>仅仅只需要修改折一个配置即可，因为其他的默认都为true，不用再配置了，这就是Spring Boot所说的约定大于配置</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">@SpringBootApplication</span></span><br><span class="line"> <span class="meta">@EnableEurekaClient</span></span><br><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EurekaServerApplication</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  SpringApplication.run(EurekaServerApplication.class, args);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line">   <span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EurekaServerApplication</span> </span>&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    SpringApplication.run(EurekaServerApplication.class, args);</span><br><span class="line">     &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li>
 <p>自我保护模式</p>
 <ul>
 <li>Eureka Server在运行期间会不断的统计心跳失败比例，如果再15分钟内有超过85%的client未正常发送心跳过来(单机模式很容易满足，生产环境如果出现这个情况则一般是网络通信出现了问题)，那么Eureka Server就会认为自己和客户端出现了网络故障，就会进入自我保护模式</li>
-<li>自我保护模式的原则是宁可放过不可错杀，意思就是即使服务宕机了，我们在注册中心看到的服务状态依然是UP</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>
+<p>自我保护模式的原则是宁可放过不可错杀，意思就是即使服务宕机了，我们在注册中心看到的服务状态依然是UP</p>
+<ul>
 <li>自我保护模式使的Eureka实现了CAP中的AP，默认是开启的，可以通过参数<code>eureka.server.enable-self-preservation=false</code>进行关闭，但是在实际生产环境中不建议关闭，因为如果关闭的话，可能就直接导致服务不可用了</li>
-<li>在正常情况下，如果超过默认的90秒未接收到某client的心跳，则将该client做下线处理，并从服务列表中移除掉；但是在保护模式下，不会将无心跳的client从服务列表中移除</li>
+</ul>
+</li>
+<li>
+<p>在正常情况下，如果超过默认的90秒未接收到某client的心跳，则将该client做下线处理，并从服务列表中移除掉；但是在保护模式下，不会将无心跳的client从服务列表中移除</p>
+<ul>
 <li>自我保护模式下，当前Server节点依然可以接收通信正常的服务的注册和发现，但是不会将新注册的服务同步给集群中的其他Server节点，只有待网络恢复且退出自我保护模式之后，才会将自我保护模式期间新注册的服务同步给其他节点</li>
 <li>Eureka的服务健康检查是通过actuator的/info和/health来实现的</li>
 </ul>
 <p><img src="/images/image-20200402211128777.png" alt="image-20200402211128777"></p>
 </li>
 </ul>
-</li>
-<li>
-<p>Consul</p>
+<p>####Consul</p>
 <p>Consul用于实现分布式系统的服务发现与配置，其它分布式服务注册与发现的方案，满足CAP的CP，Consul 的方案更“一站式”，内置了服务注册与发现框 架、分布一致性协议实现、健康检查、Key/Value 存储、多数据中心方案，不再需要依赖其它工具（ZooKeeper等），Consul可以与Docker完美融合使用Go语言开发，基于 Mozilla Public License 2.0 的协议开源。</p>
 <ul>
 <li>
@@ -703,9 +700,7 @@
 </ul>
 </li>
 </ul>
-</li>
-<li>
-<p>Ribbon</p>
+<p>####Ribbon</p>
 <p>负载均衡(Load Balance)是用于解决一个服务节点无法处理所有请求的算法，Ribbon是一款基于TCP和HTTP的客户端负载均衡工具，基于Netflix Ribbon，由Spring Cloud进行了再封装，将我们的REST模板的请求均转换为客户端负载均衡的服务调用，Ribbon仅仅只是一个工具，包含在每一个Spring Cloud应用中，无需单独的部署其他服务。</p>
 <p>由于Ribbon属于是客户端负载均衡，所以需要在客户端维护一份服务端列表信息，而这些列表信息来自于服务注册中心，如Eureka、Consul等，客户端的服务端列表信息也需要不断的去更新，保证服务列表中服务的可用性，这个过程并不是在客户端去检测各个服务端的心跳，而是通过与服务注册中心进行数据交换来维护服务端的健康。</p>
 <p>Spring Cloud默认会自动加载和配置Ribbon的一切，我们只需要去解读一下<code>org.springframework.cloud.netflix.ribbon.eureka.RibbonEurekaAutoConfiguration</code>和<code>org.springframework.cloud.consul.discovery.RibbonConsulAutoConfiguration</code>就可以知道一切了，这里不做源码解释</p>
@@ -799,9 +794,7 @@
 </ol>
 </li>
 </ul>
-</li>
-<li>
-<p>Hystrix</p>
+<p>####Hystrix</p>
 <p>Spring Cloud Hystrix是从Netflix Hystrix延伸出的一个轻量级的组件，主要功能是服务容错和线程隔离。</p>
 <p>在微服务架构中，服务之间通过远程调用的方式进行通信，会出现一个请求走过多个服务的情况，在请求链路中，一旦某个服务出现故障，那么所有依赖这个服务的其他服务均会发生故障，严重的情况下会导致整个系统全部瘫痪，这与我们做微服务的初衷是相悖的。Hystrix的断路器模式帮我们提升了服务的故障容错能力，当某个服务或某个接口出现故障时，通过断路器的监控，给调用方返回一个指定的错误响应，避免调用方因为长期等待一直占用线程而造成的故障蔓延。</p>
 <p>Hystrix具备服务降级、服务熔断、线程隔离、请求缓存、请求合并和服务监控等功能，我们常用的大多就是降级和熔断了。</p>
@@ -883,9 +876,7 @@
 </blockquote>
 </li>
 </ul>
-</li>
-<li>
-<p>Feign</p>
+<p>####Feign</p>
 <p>Spring Cloud Feign是从Netflix Feign扩展出来的一套通过声明式服务调用客户端的组件，使用Feign可用帮助我们更简单的构建一个Web服务，我们只需要通过注解来编写接口，就可以完成对服务接口的绑定。Feign对Hystrix有依赖关系，它只是一个简单的REST框架，最终还是需要通过Ribbon去做负载均衡，通过上面的内容可以看出Feign+Eureka+Ribbon是一家人，Feign通过整合Eureka和Ribbon来实现支持负载均衡的客户端服务。</p>
 <p>使用Feign，我们需要将下游服务的接口定义引入到当前应用中，毕竟Java是一个面向对象的语言，即便是RPC调用，我们也需要使用相同的参数类型，并且尽量保证我们参与传递的参数都能够被序列化，所以既然我们要引入下游服务的接口定义，那么我们尽量在下游接口定义中定义FeignClient，这样做的好处是，服务可以被多个客户端使用，不需要每个客户端都定义一次 Feign 接口。</p>
 <p>客户端需要在启动类上使用注解<code>@EnableFeignClients</code>开启Feign，Feign最终仍然是使用HTTP方式去发起请求。</p>
@@ -909,8 +900,6 @@
 </li>
 </ul>
 <p>Feign支持多种注解方式：Feign、JAX-RS、SpringMVC。</p>
-</li>
-</ol>
 <p>​</p>
 
       
@@ -966,7 +955,7 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="../../02/浅谈RPC/" title="浅谈RPC"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="../../02/聊一聊SPI/" title="聊一聊SPI"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
