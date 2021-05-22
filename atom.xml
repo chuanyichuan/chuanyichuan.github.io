@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://chuanyichuan.github.io/"/>
-  <updated>2021-05-22T15:27:47.966Z</updated>
+  <updated>2021-05-22T15:55:23.907Z</updated>
   <id>http://chuanyichuan.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://chuanyichuan.github.io/2021/05/18/%E5%BE%AE%E4%BF%A1%E6%8A%A2%E7%BA%A2%E5%8C%85%E8%AE%BE%E8%AE%A1/"/>
     <id>http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/</id>
     <published>2021-05-17T17:22:00.000Z</published>
-    <updated>2021-05-22T15:27:47.966Z</updated>
+    <updated>2021-05-22T15:55:23.907Z</updated>
     
     <content type="html"><![CDATA[<p>现在的工作上，很多人动辄就会遇到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。</p><p>在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、查看红包领取记录。</p>]]></content>
     
@@ -44,10 +44,10 @@
   
   <entry>
     <title>整理面试题</title>
-    <link href="http://chuanyichuan.github.io/2021/05/16/%E6%95%B4%E7%90%86%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
-    <id>http://chuanyichuan.github.io/2021/05/16/整理面试题/</id>
-    <published>2021-05-16T10:09:00.000Z</published>
-    <updated>2021-05-22T15:32:59.106Z</updated>
+    <link href="http://chuanyichuan.github.io/2021/05/17/%E6%95%B4%E7%90%86%E9%9D%A2%E8%AF%95%E9%A2%98/"/>
+    <id>http://chuanyichuan.github.io/2021/05/17/整理面试题/</id>
+    <published>2021-05-17T10:09:00.000Z</published>
+    <updated>2021-05-22T15:55:21.125Z</updated>
     
     <content type="html"><![CDATA[<ol><li><p>JVM频繁FGC如何排查，FGC的原因是什么，如何减少FGC</p></li><li><p>怎么查看GC日志，GC日志关注哪些内容，通过这些内容能总结出什么问题</p></li><li><p>spring事务的具体实现是怎么做的，事务为什么会失效，针对失效的事务怎么优化</p></li><li><p>锁在spring事务中的使用方式，spring事务内锁的释放方式</p></li><li><p>JVM内存有哪些区域，这些区域的上层是什么，除了堆，还有什么</p></li><li><p>什么情况下会出现FGC，出现FGC后如何排查代码，出现FGC后如何定位JVM堆内存问题</p></li><li><p>栈溢出的怎么排查问题，什么情况下栈会OOM</p></li><li><p>如何把方法区撑爆</p></li><li><p>发生一次FGC之后，堆内存未释放过多，如何排查原因</p></li><li><p>当JVM堆内存溢出后，其他线程是否可继续工作</p></li><li><p>MySQL锁有几种，间隙锁如何实现的，和隔离级别有什么关系</p></li><li><p>隔离级别默认是哪个，如果改成RC会出现什么问题，RR如何解决幻读的(MVCC)</p></li><li><p>MySQL的索引有几种类型，结构是什么，索引什么情况下会不生效，怎么查看SQL是否用到了索引</p></li><li><p>组合索引a,b,c，order by c,b,a会用到索引吗，为什么</p></li><li><p>explain中的extra中的using index和using filesort的区别</p></li><li><p>explain中需要关注哪些属性字段，意义分别是什么</p></li><li><p>一条SQL最多会使用多少个索引</p></li><li><p>a、b、c三个字段，组合索引ab、ac、bc，where中使用到a=? and b=? and c=?，会命中哪一个索引，为什么</p></li><li><p>如何排查MySQL的慢查询语句</p></li><li><p>一条SQL查询非常慢，怎么优化这条SQL</p></li><li><p>CPU指标突刺，是什么原因，怎么定位问题</p></li><li><p>系统监控是如何做的，服务日志监控是如何做的，服务告警如何做的</p></li><li><p>服务性能瓶颈是如何定位的，定位后如何提升性能的，高可用要解决的问题是什么，又会带来什么问题</p></li><li><p>服务接口响应慢，如何排查和定位问题</p></li><li><p>为什么引入Redis，引入Redis后做了什么，如何确定哪一块逻辑要用Redis，如果不用Redis可不可以，Redis用的哪一个数据结构</p></li><li><p>服务限流、熔断怎么做的，什么情况下会出现熔断，熔断降级是怎么做的，实现原理是什么</p></li><li><p>如何监控服务接口的QPS</p></li><li><p>链路追踪是如何做的，原理是什么，对于单体应用，如何监控请求链路</p></li><li><p>在xxx项目中，有什么比较不错的设计方案，带来了什么效果</p></li><li><p>平时工作中的主要内容是什么，开发和管理的比例是多少</p></li><li><p>分布式ID生成器设计原理是什么</p></li><li><p>锁是如何实现的，使用的哪种锁</p></li><li><p>为什么设计为单体架构，预计什么时候改为高可用架构</p></li><li><p>主要原理是什么，QPS是多少，吞吐量是多少</p></li><li><p>stringbuffer和stringbuilder的区别</p></li><li><p>ArrayList和linkedlist的区别</p></li><li><p>NIO，select、epoll、poll和reactor</p></li><li><p>时间轮子实现调度</p></li><li><p>JVM调优</p></li><li><p>G1/ZGC的算法，新版jdk对CMS的优化</p></li><li><p>reuseport详解</p></li><li><p>Redis相关的知识点</p></li><li><p>mycat和shardingjdbc场景和区分</p></li><li><p>sdk和proxy的稳定性更新</p></li><li><p>延迟队列的设计</p></li><li><p>时间轮子怎么分流</p></li><li><p>MySQL索引结构为什么不用跳表</p></li><li><p>网关主要功能，如何设计</p></li><li><p>Redis是如何做主从切换的(Sentinel)</p></li><li><p>微信抢红包设计</p></li></ol>]]></content>
     
