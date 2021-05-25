@@ -18,18 +18,21 @@
   
   
   <title>微信抢红包设计 | 串一串</title>
-  <meta name="description" content="现在的工作上，很多人动辄就会遇到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、">
+  <meta name="description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
 <meta name="keywords" content="面试">
 <meta property="og:type" content="article">
 <meta property="og:title" content="微信抢红包设计">
 <meta property="og:url" content="http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/index.html">
 <meta property="og:site_name" content="串一串">
-<meta property="og:description" content="现在的工作上，很多人动辄就会遇到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、">
+<meta property="og:description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-22T15:55:23.907Z">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525115828021.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525120415369.png">
+<meta property="og:updated_time" content="2021-05-25T05:40:45.210Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信抢红包设计">
-<meta name="twitter:description" content="现在的工作上，很多人动辄就会遇到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、">
+<meta name="twitter:description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/image-20210525115828021.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/index.html">
   
@@ -191,7 +194,7 @@
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -220,7 +223,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -232,6 +235,31 @@
     <div class="widget-body">
       <ul class="recent-post-list list-unstyled ">
         
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../20/Spring参数注入方式/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/Spring/">Spring</a>
+              </p>
+              <p class="item-title">
+                <a href="../../20/Spring参数注入方式/" class="title">Spring参数注入方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-20T04:30:00.000Z" itemprop="datePublished">2021-05-20</time>
+              </p>
+            </div>
+          </li>
+          
           <li>
             
             <div class="item-thumb">
@@ -332,31 +360,6 @@
             </div>
           </li>
           
-          <li>
-            
-            <div class="item-thumb">
-              <a href="../../09/记一次线上JVM优化/" class="thumb">
-    
-    
-        <span class="thumb-image thumb-none"></span>
-    
-</a>
-
-            </div>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="../../../../categories/Java/">Java</a>
-              </p>
-              <p class="item-title">
-                <a href="../../09/记一次线上JVM优化/" class="title">记一次线上JVM优化</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2021-05-09T03:50:00.000Z" itemprop="datePublished">2021-05-09</time>
-              </p>
-            </div>
-          </li>
-          
       </ul>
     </div>
   </div>
@@ -414,18 +417,98 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 184(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2k(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
 	
 
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <p>现在的工作上，很多人动辄就会遇到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。</p>
-<p>在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、查看红包领取记录。</p>
+        <h3 id="a"><a class="markdownIt-Anchor" href="#a"></a> A</h3>
+<p>现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。</p>
+<p>在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、入账、查看红包领取记录、红包被领取通知。从这7个步骤着手简单分析一下（实际不止这几个），这几项哪些是会影响用户体验的呢？感觉每一个都会，但相对来说收红包、拆红包的实时性体验更重要，并且这两者属于是并发量最高的，比如在一个100人的群中发一个10人份的红包，来分析一下请求量：</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Request Quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发红包</td>
+<td>1</td>
+</tr>
+<tr>
+<td>扣款</td>
+<td>1</td>
+</tr>
+<tr>
+<td>收红包</td>
+<td>100</td>
+</tr>
+<tr>
+<td>拆红包</td>
+<td>100</td>
+</tr>
+<tr>
+<td>领取金额</td>
+<td>10</td>
+</tr>
+<tr>
+<td>入账</td>
+<td>10</td>
+</tr>
+<tr>
+<td>查看红包领取记录</td>
+<td>100+</td>
+</tr>
+<tr>
+<td>红包被领取通知</td>
+<td>10</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>实际上对于一个红包来说，可能带来群内用户数的请求量，如果放在一个五百人的群中，那么一个收红包的请求数可能就会达到500，春晚期间每秒百万个红包，则带来的请求量就是一秒几个亿的级别，当然这是一个理论上的数据，如果想要达到几个亿的并发量，那我不会~</p>
+<h3 id="分析"><a class="markdownIt-Anchor" href="#分析"></a> 分析</h3>
+<h4 id="1-硬件"><a class="markdownIt-Anchor" href="#1-硬件"></a> 1. 硬件</h4>
+<p>硬件么，也就是服务器了，常常被调侃的往往最有效：出现了并发瓶颈怎么办？答：加机器！加内存！加磁盘！加带宽！是不是当听到这个回答之后感觉对方挺没意思，那么如果在工程的JVM、代码、队列、缓存等等一系列都完善好了，这时候怎么办？只能具体问题具体分析了：如果瓶颈在内存上，那么就加内存；如果瓶颈在磁盘上，空间不足那么就加磁盘，写读速度太低，那么就换SSD；如果瓶颈在CPU上，那么就加机器，横向扩充CPU；如果是网络问题，那么就加带宽。</p>
+<p>通过以上分析，是不是觉得加机器还是挺有道理的。加机器会带来的优势：内存大、磁盘读写快、CPU管够、网络嗖嗖的</p>
+<h4 id="2-代码"><a class="markdownIt-Anchor" href="#2-代码"></a> 2. 代码</h4>
+<p>在加机器之前，都应该先把服务工程的代码优化到极致，代码优化就不细说了，属于是日常积累。</p>
+<h4 id="3-锁"><a class="markdownIt-Anchor" href="#3-锁"></a> 3. 锁</h4>
+<p>乐观锁和悲观锁的正确使用能够带来不同的性能指标，</p>
+<h3 id="设计"><a class="markdownIt-Anchor" href="#设计"></a> 设计</h3>
+<h4 id="1-发收红包"><a class="markdownIt-Anchor" href="#1-发收红包"></a> 1. 发收红包</h4>
+<p>红包的并发有多高？简单的计算一下：十万个人，每个人同时发一个红包，发红包的并发量就是十万，但实际上在高峰期时期，不可能只有十万个人在发红包。拒资料记载：在2017年除夕当天，收发微信红包的数量达到了142亿，按照一天86400秒计算的话，平均每秒就有16万个红包发出，也就是持续一整天每秒并发16万，当然流量不可能这么平均，资料上记录当天最高峰值达到了76万每秒，是平均值的5倍左右。</p>
+<p>发红包是允许发送失败(告诉用户网络问题，让用户自我怀疑)，但不允许发送成功之后丢失数据，因为涉及到钱，数据安全性和一致性的要求必须非常高，先不考虑数据的安全性和一致性，这里可以使用中间件来保证。在并发量较高的情况下，发红包请求发出之后，服务器并不能每一个请求都及时处理，所以这里如果把同步搞为异步，会解决什么问题（不涉及扣款）：</p>
+<blockquote>
+<p>同步</p>
+</blockquote>
+<p><code>接收发红包请求-&gt;通知群内所有人-&gt;全部通知完成-&gt;反馈用户红包发送成功-&gt;准备接收发红包请求</code></p>
+<p>从同步请求来看，一台实例每次只能处理一个请求，如果红包通知的目标人群数量庞大，那么这将是非常耗时的操作，并且如果其中一个用户通知失败（中途有人退群），还可能会影响到全部的通知，造成的延迟将不可预估。当每台实例每秒只能处理一个请求的时候，高峰期的76万个并发则需要76万台实例，公司没那么多银子，砸不起。</p>
+<blockquote>
+<p>异步</p>
+</blockquote>
+<p><code>1. 接收发红包请求-&gt;存入消息队列-&gt;反馈用户红包发送成功-&gt;准备接收发红包请求</code></p>
+<p><code>2. 发红包消息处理器-&gt;拆解消息通知-&gt;存入消息队列</code></p>
+<p><code>3. 通知消息处理器-&gt;发送通知</code></p>
+<p>接着就是异步处理，服务端接收到发红包请求之后立即将请求放入发红包消息处理队列，然后立即反馈用户发送成功，这里耗时的地方只有与消息队列通信这一个，在网络正常的情况下，耗时微乎其微。发红包的请求入队之后按顺序排排好，等待消费端进行消费处理（这里要保证消息不能丢失），接下来就是消息处理器的工作了，对于发红包的用户来说红包已经发成功了，其他人啥时候收到就不关我事了，反正我发出去了。</p>
+<p>至于消息消费的效率问题，就属于是消息中间件的吞吐量问题了，选择和配置相关参数提升吞吐量不算太难的事情，关键要有银子，不然买不起好的机器也没太大用处。发红包消息处理器对收到的消息进行拆解，按用户进行拆分，将拆分后的数据封装成一条条通知消息，并将通知消息放入到通知消息队列中，至于顺序，那就关系不大了，这里一般不需要保证有序，因为没有必要保证收到消息的用户要按照入群的顺序来啊，不然如果真因为网络问题或者中间件吞吐量问题造成了延迟，本群抢到红包的就永远都是最先入群的那几个人了。</p>
+<p>通知消息处理器从队列中依次处理消息，按个儿通知用户，此刻用户就能发现有一个红包出现。消息通知晚的那就只能手慢无了。</p>
+<p><em><strong>所以有时候抢不到红包不一定是你手速慢，也可能是没那个命</strong></em></p>
+<h4 id="2-拆红包"><a class="markdownIt-Anchor" href="#2-拆红包"></a> 2. 拆红包</h4>
+<p>当我们看到红包之后，也不知道它有没有被抢完，第一反应肯定都是我要点它，点击红包会有一个加载的过程，加载的过程就是在向后台请求当前时刻红包是否已被抢完，如果没被抢完则会出现一个大大的<strong>開</strong>，点击开抢（一直没搞明白为什么不依据定向红包、手气红包这种红包类型变更按钮，比如定向叫拆[没福气被拆迁，可以被拆红包也不错]，或者手气红包叫抢[不知道是不是有限制不能用抢这个字]）。</p>
+<p>​						<img src="/images/image-20210525115828021.png" alt="image-20210525115828021" style="zoom:50%; ">               														<img src="/images/image-20210525120415369.png" alt="image-20210525120415369" style="zoom:50%;"></p>
+<h4 id="3-领取金额"><a class="markdownIt-Anchor" href="#3-领取金额"></a> 3. 领取金额</h4>
+<h4 id="4-查看红包领取记录"><a class="markdownIt-Anchor" href="#4-查看红包领取记录"></a> 4. 查看红包领取记录</h4>
 
       
     </div>
@@ -478,6 +561,10 @@
   <div class="bar-inner">
   
   <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="../../20/Spring参数注入方式/" title="Spring参数注入方式"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
     
     
     <li class="next">
