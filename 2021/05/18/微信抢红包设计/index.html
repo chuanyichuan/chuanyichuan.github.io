@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525115828021.png">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525120415369.png">
-<meta property="og:updated_time" content="2021-05-25T09:34:54.269Z">
+<meta property="og:updated_time" content="2021-05-25T10:28:39.770Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信抢红包设计">
 <meta name="twitter:description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
@@ -417,10 +417,10 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.4k(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.6k(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 11(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 12(分)</span>
 	
 
       </div>
@@ -456,7 +456,7 @@
 </tr>
 <tr>
 <td>领取金额</td>
-<td>10</td>
+<td>10~100</td>
 </tr>
 <tr>
 <td>入账</td>
@@ -518,6 +518,15 @@
 <p>使用本地缓存可以提升性能，但是会带来另一个问题：只有关于这个红包的所有请求都发送到固定的一台机器上，才能正确的使用本地缓存，否则如果出现请求离散的情况，本地缓存就是一个诟病了。所以如果想使用本地缓存的话，我们就要控制请求路由，让同一个红包的请求都发送到固定的一台实例上，这要怎么整？我们知道常用的请求路由方式有：轮询、权重、ip-hash、fair（第三方）、url-hash（第三方），轮询好像不行，每一次请求都被路由到不同的实例上，权重好像也不行，ip-hash只能够保证同一个客户端的请求路由到固定的实例，fair是按后端服务器的响应时间来分配请求，更不合适了，还有一种根据url计算hash，也不合适，不可能所有的请求都是一个hash值。常用的路由好像都不合适，但是我们发现了一种能让指定请求都路由到一台实例上的方式，ip-hash和url-hash，那么我们能不能针对红包搞一个read-packet-hash算法，将同一个红包的所有操作请求都路由到一台实例上，貌似可以，那么就不介绍具体实现了，网关层做控制很简单：对每一个红包在创建的时候都生成一个全局唯一ID，后续针对这个ID计算哈希进行路由。</p>
 <p>使用本地缓存的话，如果有人杠起来：一台实例挂了的话岂不是这台实例的所有红包数据都丢失了？那你咋说？当然怼回去：Redis某ms节点挂了的话影响的服务实例更多，咋整？只能尽可能的保证节点的稳定性，但也不是说使用了本地缓存就弃用远程缓存，两者是相辅相成、互相同步的关系：本地-&gt;远程 &amp;&amp; 远程-&gt;本地。</p>
 <h4 id="3-领取金额"><a class="markdownIt-Anchor" href="#3-领取金额"></a> 3. 领取金额</h4>
+<p>红包都被拆开了，是不是就可以分钱了呢？是的，可以分钱了，分钱的并发量在红包数量~群内人数之间，为什么说能够达到群内人数这么高的并发，如果所有人都在同一时刻点开红包然后同一秒内点<strong>開</strong>，那么领红包的接口并发量就上来了，领取功能简单，关键就在于金额怎么分配，我们依据单例的懒汉模式和饿汉模式来分析一下：</p>
+<blockquote>
+<p>懒汉模式</p>
+</blockquote>
+<p>懒汉模式就是每一个请求来到之后再做相应的处理，数据处理为实时的。</p>
+<blockquote>
+<p>饿汉模式</p>
+</blockquote>
+<p>饿汉模式就是在请求到来之前，先把数据准备好，数据处理为异步的。</p>
 <h4 id="4-查看红包领取记录"><a class="markdownIt-Anchor" href="#4-查看红包领取记录"></a> 4. 查看红包领取记录</h4>
 
       
