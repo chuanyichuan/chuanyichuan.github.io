@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525115828021.png">
 <meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525120415369.png">
-<meta property="og:updated_time" content="2021-05-25T10:28:39.770Z">
+<meta property="og:updated_time" content="2021-05-26T07:03:02.948Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信抢红包设计">
 <meta name="twitter:description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
@@ -417,10 +417,10 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.6k(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.9k(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 12(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 13(分)</span>
 	
 
       </div>
@@ -522,12 +522,16 @@
 <blockquote>
 <p>懒汉模式</p>
 </blockquote>
-<p>懒汉模式就是每一个请求来到之后再做相应的处理，数据处理为实时的。</p>
+<p>懒汉模式就是每一个请求来到之后再做相应的处理，数据处理为同步的。</p>
 <blockquote>
 <p>饿汉模式</p>
 </blockquote>
 <p>饿汉模式就是在请求到来之前，先把数据准备好，数据处理为异步的。</p>
+<hr>
+<p>这两种模式应该怎么选择？同步模式下，每次请求都需要通过算法计算一次所得金额，并发情况下需要争抢同一个资源，每一次计算的耗时造成过多的锁等待；而异步模式下，在抢红包请求到来之前，每个人所得金额都已经排好排等着被领走了，只需要依据先来先得的规则按需取走即可，计算时间成本下降了，锁等待时间就相应的下降了，并发就提升了。</p>
+<p><em><strong>1…异步刷库到账</strong></em></p>
 <h4 id="4-查看红包领取记录"><a class="markdownIt-Anchor" href="#4-查看红包领取记录"></a> 4. 查看红包领取记录</h4>
+<p>查看红包领取记录属于是一个常规Action，不论什么时候都可以查看过往红包的领取记录，上面讲了可以将已领完的红包数据缓存到客户端，那么在服务端怎么处理？Elasticsearch、MongoDB、HBASE这些先不讨论，就拿MySQL来说，除夕一天142亿个红包，如果平均每个红包都有10个小包，那就是1420亿条领取记录，突然一下给整不会了，没处理过这么大的数据量，我先想想</p>
 
       
     </div>
