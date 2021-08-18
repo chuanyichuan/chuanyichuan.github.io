@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000">
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top">
+  
+  
+  <title>高可用架构设计 | 串一串</title>
+  <meta name="description" content="[Toc]  1 高可用架构简介  1.1 什么是高可用 高可用HA（High Availability）是分布式系统架构设计中必须考虑的因素之一，它通常是指，通过设计减少系统不能提供服务的时间。  1.2 系统可用性度量 要做好一个设计，我们需要一个设计目标，或是一个基准线，通过这个基准线或目标指导我们的设计，系统可用性指标就是我们的设计目标，业界通常用多个9衡量系统的可用性。如对象存储产品的可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高可用架构设计">
+<meta property="og:url" content="http://chuanyichuan.github.io/2020/04/19/高可用架构设计/index.html">
+<meta property="og:site_name" content="串一串">
+<meta property="og:description" content="[Toc]  1 高可用架构简介  1.1 什么是高可用 高可用HA（High Availability）是分布式系统架构设计中必须考虑的因素之一，它通常是指，通过设计减少系统不能提供服务的时间。  1.2 系统可用性度量 要做好一个设计，我们需要一个设计目标，或是一个基准线，通过这个基准线或目标指导我们的设计，系统可用性指标就是我们的设计目标，业界通常用多个9衡量系统的可用性。如对象存储产品的可">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong1.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong2.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong3.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong4.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong5.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong6.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong7.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong8.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/gaokeyong9.png">
+<meta property="og:updated_time" content="2021-04-25T15:26:23.892Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="高可用架构设计">
+<meta name="twitter:description" content="[Toc]  1 高可用架构简介  1.1 什么是高可用 高可用HA（High Availability）是分布式系统架构设计中必须考虑的因素之一，它通常是指，通过设计减少系统不能提供服务的时间。  1.2 系统可用性度量 要做好一个设计，我们需要一个设计目标，或是一个基准线，通过这个基准线或目标指导我们的设计，系统可用性指标就是我们的设计目标，业界通常用多个9衡量系统的可用性。如对象存储产品的可">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/gaokeyong1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://chuanyichuan.github.io/2020/04/19/高可用架构设计/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="串一串" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/luxiaowan" target="_blank">
+          <img class="img-circle img-rotate" src="../../../../images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">串一串</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">浪人</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Suzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="../../../../.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="../../../../archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="../../../../repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="../../../../books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="../../../../links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="../../../../about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>断舍离!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/DDD/">DDD</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringCloud/">SpringCloud</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Gateway/">Gateway</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Seata/">Seata</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式事务/">分布式事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式锁/">分布式锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/网关/">网关</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/锁/">锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.17px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/Gateway/" style="font-size: 13px;">Gateway</a> <a href="../../../../tags/JVM/" style="font-size: 13.5px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.17px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.33px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.17px;">MySQL</a> <a href="../../../../tags/Redis/" style="font-size: 13px;">Redis</a> <a href="../../../../tags/Seata/" style="font-size: 13px;">Seata</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13.17px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.17px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.67px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/事务/" style="font-size: 13px;">事务</a> <a href="../../../../tags/分布式事务/" style="font-size: 13px;">分布式事务</a> <a href="../../../../tags/分布式锁/" style="font-size: 13px;">分布式锁</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.17px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/网关/" style="font-size: 13px;">网关</a> <a href="../../../../tags/锁/" style="font-size: 13px;">锁</a> <a href="../../../../tags/阿里/" style="font-size: 13.33px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.83px;">面试</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/08/">八月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/07/">七月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../../2021/08/18/服务器k8s部署脚本/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../../2021/08/18/服务器k8s部署脚本/" class="title">服务器K8s部署脚本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-18T08:31:00.000Z" itemprop="datePublished">2021-08-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../../2021/08/16/DDD设计架构初识/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/DDD/">DDD</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../../2021/08/16/DDD设计架构初识/" class="title">DDD设计架构初识</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-16T05:14:00.000Z" itemprop="datePublished">2021-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../../2021/07/22/Raft协议探析/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/分布式/">分布式</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../../2021/07/22/Raft协议探析/" class="title">Raft协议探析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-22T15:23:00.000Z" itemprop="datePublished">2021-07-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../../2021/07/04/mysqldump备份与恢复/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../../2021/07/04/mysqldump备份与恢复/" class="title">Mysqldump备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-04T12:00:00.000Z" itemprop="datePublished">2021-07-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../../2021/06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../../2021/06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="title">LibreSSL SSL_connect SSL_ERROR_SYSCALL in Connection to github.com 443</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-16T07:00:00.000Z" itemprop="datePublished">2021-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-高可用架构设计" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      高可用架构设计
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="" class="article-date">
+	  <time datetime="2020-04-19T08:50:00.000Z" itemprop="datePublished">2020-04-19</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="../../../../categories/架构设计/">架构设计</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 9k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 30(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>[Toc]</p>
+<h1 id="1-高可用架构简介"><a class="markdownIt-Anchor" href="#1-高可用架构简介"></a> <strong>1</strong> <em><strong>高可用架构简介</strong></em></h1>
+<h2 id="11-什么是高可用"><a class="markdownIt-Anchor" href="#11-什么是高可用"></a> <strong>1.1</strong> <em><strong>什么是高可用</strong></em></h2>
+<p>高可用HA（High Availability）是分布式系统架构设计中必须考虑的因素之一，它通常是指，通过设计减少系统不能提供服务的时间。</p>
+<h2 id="12-系统可用性度量"><a class="markdownIt-Anchor" href="#12-系统可用性度量"></a> <strong>1.2</strong> <em><strong>系统可用性度量</strong></em></h2>
+<p>要做好一个设计，我们需要一个设计目标，或是一个基准线，通过这个基准线或目标指导我们的设计，系统可用性指标就是我们的设计目标，业界通常用多个9衡量系统的可用性。如对象存储产品的可用性为4个9，既99.99%可用。</p>
+<p>可用性计量表：</p>
+<p><img src="/images/gaokeyong1.png" alt="可用性计量表"></p>
+<h2 id="13-影响高可用的因素"><a class="markdownIt-Anchor" href="#13-影响高可用的因素"></a> <strong>1.3</strong> <em><strong>影响高可用的因素</strong></em></h2>
+<p>工业界中，会把服务不可用的因素分成两种：一种是无计划的，一种是有计划的。</p>
+<p>无计划的：</p>
+<p>l 系统级故障，包括主机、操作系统、中间件、数据库、网络、电源以及外围设备等。</p>
+<p>l 数据和中介的故障，包括人员误操作、硬盘故障、数据错乱等。</p>
+<p>l 还有自然灾害、人为破坏，以及供电问题等。</p>
+<p>有计划的：</p>
+<p>l 日常任务：备份，容量规划，用户和安全管理，后台批处理应用。</p>
+<p>l 运维相关：数据库维护、应用维护、中间件维护、操作系统维护、网络维护。</p>
+<p>l 升级相关：数据库、应用、中间件、操作系统、网络，包括硬件升级。</p>
+<p>以上分别归类如下：</p>
+<ol>
+<li>
+<p>网络问题：网络链接出现问题，网络带宽出现拥塞等。</p>
+</li>
+<li>
+<p>性能问题：数据库慢 SQL、Java Full GC、硬盘 IO 过大、CPU 飙高、内存不足等。</p>
+</li>
+<li>
+<p>安全问题：被网络攻击，如 DDoS 等。</p>
+</li>
+<li>
+<p>运维问题：系统总是在被更新和修改，架构也在不断地被调整，监控问题等。</p>
+</li>
+<li>
+<p>管理问题：没有梳理出关键服务以及服务的依赖关系，运行信息没有和控制系统同步等。</p>
+</li>
+<li>
+<p>硬件问题：硬盘损坏、网卡出问题、交换机出问题、机房掉电、挖掘机问题等。</p>
+</li>
+</ol>
+<h1 id="2-设计规范"><a class="markdownIt-Anchor" href="#2-设计规范"></a> <strong>2</strong> <em><strong>设计规范</strong></em></h1>
+<h2 id="21-设计原则"><a class="markdownIt-Anchor" href="#21-设计原则"></a> <strong>2.1</strong> <em><strong>设计原则</strong></em></h2>
+<h3 id="211-明确高可用方案"><a class="markdownIt-Anchor" href="#211-明确高可用方案"></a> <strong>2.1.1</strong> <em><strong>明确高可用方案</strong></em></h3>
+<p>在产品架构设计方案中需包含高可用设计章节，分析整个架构的复杂度，明确每个服务组件是否需要进行高可用设计，全面分析系统可用性。</p>
+<h3 id="212-设计备选方案"><a class="markdownIt-Anchor" href="#212-设计备选方案"></a> <strong>2.1.2</strong> <em><strong>设计备选方案</strong></em></h3>
+<p>在产品架构设计阶段建议设计备选方案，数量以2~4个为最佳，备选方案之间的差异要比较明显，技术方案不只局限于已经熟悉的技术。</p>
+<h3 id="213-冗余设计"><a class="markdownIt-Anchor" href="#213-冗余设计"></a> <strong>2.1.3</strong> <em><strong>冗余设计</strong></em></h3>
+<p>对服务、数据库等应用做结点冗余设计，保证整体业务的高可用，关键组件无单点故障风险。</p>
+<h3 id="214-无状态设计"><a class="markdownIt-Anchor" href="#214-无状态设计"></a> <strong>2.1.4</strong> <em><strong>无状态设计</strong></em></h3>
+<p>API、接口等的设计不能有前后依赖关系，一个资源不受其他资源改动的影响。无状态的系统才能更好地进行扩展。如果非得有状态，则要么客户端管理状态，要么服务端用分布式缓存管理状态。</p>
+<h3 id="215-可回滚"><a class="markdownIt-Anchor" href="#215-可回滚"></a> <strong>2.1.5</strong> <em><strong>可回滚</strong></em></h3>
+<p>发布版本失败时刻随时快速回退到上一个稳定版本。对于任何业务尤其是关键业务，都具有恢复机制。可以使用基于日志的WAL、基于事件的Event sourcing、K8S平台能力等来实现可回滚。</p>
+<h3 id="216-可禁用自我保护"><a class="markdownIt-Anchor" href="#216-可禁用自我保护"></a> <strong>2.1.6</strong> <em><strong>可禁用/自我保护</strong></em></h3>
+<p>在接入层实现限流机制，当上游的流量超过自身的负载能力时，能够拒绝溢出的请求。可以通过手动开关或者自动开关（监测异常流量行为），在应用前端挡住流量。限流算法包括：令牌桶（支持突发流量）、漏桶（匀速流量）、计数器以及信号量（限制并发访问的数量）。</p>
+<h3 id="217-故障隔离"><a class="markdownIt-Anchor" href="#217-故障隔离"></a> <strong>2.1.7</strong> <em><strong>故障隔离</strong></em></h3>
+<p>在系统架构设计时，要尽可能考虑故障的情况，当存在依赖关系的系统、系统内部组件或系统依赖的底层资源发生故障后，采取故障隔离措施可以将故障范围控制在局部，防止故障范围扩大，增加对上层系统可用性带来的影响，可使用降级、服务或资源隔离、异步调用等技术方案。</p>
+<h2 id="22-业务高可用设计"><a class="markdownIt-Anchor" href="#22-业务高可用设计"></a> <strong>2.2</strong> <em><strong>业务高可用设计</strong></em></h2>
+<p>业务产品典型架构分层设计参考如下：</p>
+<img src="/images/gaokeyong2.png" alt="img" style="zoom:10%;">
+<p>接入层主要负责流量的分发；应用层主要负责具体业务逻辑处理；服务层负责提供可复用的服务；数据层负责数据的存储与访问。</p>
+<p>位于接入层的服务器作为用户（包括内部用户和外部用户）与关键服务器的隔离层，直接接收用户的请求，并转发给后端应用服务器。</p>
+<p>位于应用层的服务器通常为了应对高并发的访问请求，会通过接入层的负载均衡设备将一组服务器组成一个集群共同对外提供服务，当负载均衡设备通过心跳检测等手段监控到某台服务器不可用时，就将其从集群列表中剔除，并将请求分发到集群宏其他可用的服务器上，使整个集群保持可用，从而实现高可用。</p>
+<p>位于服务层的服务器情况和应用层服务器类似，也是通过集群方式实现高可用，只是这些服务器被应用层通过分布式服务调用框架访问，分布式服务调用框架会在应用层客户端程序中实现软件负载均衡，并通过服务注册中心对提供服务的服务器进行心跳检测，发现有服务不可用，立即通知客户端程序修改服务访问列表，剔除不可用的服务器。</p>
+<p>位于数据层的服务器情况比较特殊，数据服务器上存储着数据，为了保证服务器宕机时数据不丢失，数据访问服务不中断，需要在数据写入时进行数据同步复制，将数据写入多台服务器上，实现数据冗余备份。当数据服务器宕机时，应用程序将访问切换到有备份数据的服务器上。</p>
+<h3 id="221-接入层高可用"><a class="markdownIt-Anchor" href="#221-接入层高可用"></a> <strong>2.2.1</strong> <em><strong>接入层高可用</strong></em></h3>
+<p>【强制】接入层需实现主流的负载均衡方案，不能存在单点。</p>
+<p>对于一个功能单一，用户少，并发小的系统，接入层的确没有必要独立出来。接入服务器是直接更用户连接的，它直接影响用户体验。接入服务器故障或者是重启肯定会影响到用户，而其他业务模块故障或者重启则不一定会影响用户体验。所以为了避免接入层负载调度器的单点故障，建议部署多个负载调度器节点，通过主主或主从的方式同时工作。</p>
+<h3 id="222-应用层高可用"><a class="markdownIt-Anchor" href="#222-应用层高可用"></a> <strong>2.2.2</strong> <em><strong>应用层高可用</strong></em></h3>
+<p>【推荐】应用层需支持无状态设计，通过接入层负载均衡实现高可用。</p>
+<p>应用层主要处理应用的业务逻辑，首要的设计原则是保证应用的 <code>无状态</code> 性，所谓的 <code>无状态</code> 的应用是指应用服务器不保存业务的上下文信息，而仅根据每次请求提交的数据进行相应的业务逻辑处理，多个服务实例之间完全对等，请求提交到任意服务器，处理结果都是完全一样的。</p>
+<p>由于无状态应用，各实例之间不用考虑数据一致性问题，所以其高可用方案相对简单。对于应用层高可用架构设计，直接利用接入层负载均衡实现高可用，具体方案可以参考使用附录中计算高可用部分的主备、主从、集群方案。</p>
+<h3 id="223-服务层高可用"><a class="markdownIt-Anchor" href="#223-服务层高可用"></a> <strong>2.2.3</strong> <em><strong>服务层高可用</strong></em></h3>
+<p>【强制】对于无状态的服务，需使用负载均衡的失效转移策略来实现高可用。</p>
+<p>可复用的服务为业务产品提供基础公共服务，大型系统中这些服务通常都独立分布式部署，被具体应用远程调用。可复用的服务和应用一样，一般也是无状态的服务，因此，同样可以使用负载均衡的失效转移策略来实现高可用。</p>
+<p>除此以外，可以使用以下手段来保证服务的高可用：</p>
+<p>l 服务分级</p>
+<p>l 异步通讯设计</p>
+<p>l 重试设计</p>
+<p>l 降级设计</p>
+<p>l 限流设计</p>
+<p>l 幂等性设计</p>
+<h4 id="2231-服务分级"><a class="markdownIt-Anchor" href="#2231-服务分级"></a> <strong>2.2.3.1</strong> <em><strong>服务分级</strong></em></h4>
+<p>【强制】所有服务组件必须进行分级管理，在服务部署上进行必要的隔离。</p>
+<p>通过服务分级可以区分出哪些服务是关键性任务，哪些服务有用但不是至关重要的，建议将服务分为如下几个等级：</p>
+<p>² 一级核心服务：如果某个服务出现故障导致业务产生重大损失，应当考虑将此服务定为一级，比如登录服务、权限服务、订单服务等；</p>
+<p>² 二级重要服务：该级别服务对于业务非常重要，但是关键性不如一级核心服务，虽然可能会影响后台服务进程，但是不会对用户造成影响，例如搜索服务；</p>
+<p>² 三级一般服务：该级别级服务是对用户造成较小的，不容注意或者对业务造成有限影响的；</p>
+<p>² 四级工具服务：该级别服务即使失败，也不会对用户体验造成任何影响，更不会对业务或者资金造成损失，例如电子邮件发送、短信发送服务等；</p>
+<p>我们需要明确每个服务级别的可用性要求，下面是参考示例：</p>
+<p><img src="/images/gaokeyong3.png" alt="服务级别的可用性"></p>
+<p>在完成服务分级后，在服务部署上进行必要的隔离，避免故障的连锁反应。低优先级的服务通过启动不同的线程或部署在不同的虚拟机上进行隔离，而高优先级的服务则需要部署在不同的物理机上，核心服务和数据甚至要部署在不同地域的数据中心。</p>
+<h4 id="2232-异步通讯设计"><a class="markdownIt-Anchor" href="#2232-异步通讯设计"></a> <strong>2.2.3.2</strong> <em><strong>异步通讯设计</strong></em></h4>
+<p>【推荐】通过异步通讯设计实现服务间解耦，提升服务可用性</p>
+<p>对于需要即时响应的业务，应用在调用服务时可以通过消息队列等异步方式完成，避免一个服务失败导致整个应用请求失败的情况。当然不是所有服务调用都可以异步调用，对于获取用户信息这类调用，采用异步方式会延长响应时间，此外，对于那些必须确认服务调用才能继续下一步操作的应用也不适宜使用异步调用。</p>
+<h4 id="2233-重试设计"><a class="markdownIt-Anchor" href="#2233-重试设计"></a> <strong>2.2.3.3</strong> <em><strong>重试设计</strong></em></h4>
+<p>【推荐】对于服务间调用失去响应时需要设计重试的策略。</p>
+<p>对于由于服务器宕机、线程死锁等原因，可能导致应用程序对服务端的调用失去响应的应用场景，有必要引入超时机制，一旦调用超时，服务化框架抛出异常，应用程序根据服务调度策略，选择重试或请求转移到其他机器上。</p>
+<h4 id="2234-降级设计"><a class="markdownIt-Anchor" href="#2234-降级设计"></a> <strong>2.2.3.4</strong> <em><strong>降级设计</strong></em></h4>
+<p>【推荐】为了解决资源不足和访问量过的的问题，需要进行降级设计。</p>
+<p>降级指系统将某些业务或者接口的功能降低，可以是只提供部分功能，也可以是完全停掉所有功能。</p>
+<p>对于在服务访问的高峰期，服务可能因为大量并发调用而性能下降，严重时可能会导致宕机的应用场景，为了保证核心功能的正常运行，需要对服务进行降级。降级有两种手段：</p>
+<p>l 拒绝服务：拒绝低优先级应用的调用，减少服务调用并发数，确保核心应用正常使用。</p>
+<p>l 关闭服务：关闭部分不重要的服务，或者服务内部关闭部分不重要的功能，以节约资源。</p>
+<h4 id="2235-限流设计"><a class="markdownIt-Anchor" href="#2235-限流设计"></a> <strong>2.2.3.5</strong> <em><strong>限流设计</strong></em></h4>
+<p>【推荐】为了保护系统不足过载的情况下出现问题，需要进行限流设计。</p>
+<p>限流则是从用户访问压力的角度来考虑如何应对故障。限流指只允许系统能够承受的访问量进来，超出系统访问能力的请求将被丢弃。限流一般都是系统内实现的，常见的限流方式可以分为两类：</p>
+<p>l 基于请求限流</p>
+<p>基于请求限流指从外部访问的请求角度考虑限流，常见的方式有：限制总量、限制时间量。</p>
+<p>限制总量的方式是限制某个指标的累积上限，常见的是限制当前系统服务的用户总量，例如某个直播间限制总用户数上限为 100 万，超过 100 万后新的用户无法进入；某个抢购活动商品数量只有 100 个，限制参与抢购的用户上限为 1 万个，1 万以后的用户直接拒绝。</p>
+<p>限制时间量指限制一段时间内某个指标的上限，例如，1 分钟内只允许 10000 个用户访问，每秒请求峰值最高为 10 万。</p>
+<p>l 基于资源限流</p>
+<p>基于请求限流是从系统外部考虑的，而基于资源限流是从系统内部考虑的，即：找到系统内部影响性能的关键资源，对其使用上限进行限制。常见的内部资源有：连接数、文件句柄、线程数、请求队列等。</p>
+<p>基于资源限流相比基于请求限流能够更加有效地反映当前系统的压力，但实践中设计也面临两个主要的难点：如何确定关键资源，如何确定关键资源的阈值。</p>
+<h4 id="2236-幂等性设计"><a class="markdownIt-Anchor" href="#2236-幂等性设计"></a> <strong>2.2.3.6</strong> <em><strong>幂等性设计</strong></em></h4>
+<p>【推荐】为了保证一个服务调用被发送多次情况下的结果是一致的，需要进行幂等性设计。</p>
+<p>所谓幂等性通俗的将就是一次请求和多次请求同一个资源产生相同的副作用。因为服务重复调用时无法避免的，但是只要能从业务实现上保证，重复调用和一次调用的处理结果一致，则业务就没有问题，这就是幂等性设计。幂等性设计常用的手段如下：</p>
+<p>l MVCC</p>
+<p>多版本并发控制，乐观锁的一种实现，在数据更新时需要去比较持有数据的版本号，版本号不一致的操作无法成功</p>
+<p>l 去重表</p>
+<p>利用数据库表单的特性来实现幂等，常用的一个思路是在表上构建唯一性索引，保证某一类数据一旦执行完毕，后续同样的请求再也无法成功写入。</p>
+<p>l TOKEN机制</p>
+<p>这种机制就比较重要了，适用范围较广，有多种不同的实现方式。其核心思想是为每一次操作生成一个唯一性的凭证，也就是token。一个token在操作的每一个阶段只有一次执行权，一旦执行成功则保存执行结果。对重复的请求，返回同一个结果。</p>
+<h3 id="224-数据层高可用"><a class="markdownIt-Anchor" href="#224-数据层高可用"></a> <strong>2.2.4</strong> <em><strong>数据层高可用</strong></em></h3>
+<p>【推荐】数据层必须支持主流的存储高可用架构模式。</p>
+<p>不同于应用层和服务层高可用，由于数据存储服务器上保存的数据不同，当某台服务宕机的时候，数据访问请求不能任意切换到集群中的其他机器上。保证存储高可用的主要手段是：数据备份和失效转移，具体实施方案可以参考附录中存储高可用部分的主备复制、主从复制、集群和分区方案。</p>
+<h4 id="2241-数据备份"><a class="markdownIt-Anchor" href="#2241-数据备份"></a> <strong>2.2.4.1</strong> <em><strong>数据备份</strong></em></h4>
+<p>【强制】数据层必须具备数据的备份恢复能力。</p>
+<p>数据备份是保证数据有多个副本，任意副本的丢失都不会导致数据的永久丢失。数据备份可以采用如下两种手段：</p>
+<p>l 冷备份</p>
+<p>定期将数据复制到某种存储介质，数据冷备作为一种传统的数据保护手段，可以在系统日常运维中使用。</p>
+<p>l 热备份</p>
+<p>异步热备方式：异步热备方式是指多份数据副本的写入操作异步完成，应用程序收到数据服务系统的写操作成功响应时，只写成功了一份，存储系统将会异步地写其他副本。</p>
+<p>同步热备方式：同步热备方式是指多份数据副本的写入操作同步完成，即应用程序收到数据服务系统的写成功响应时，多份数据都已经写操作成功。但是当应用程序收到数据写操作失败的响应式，可能有部分副本或者全部副本都已经写入成功了（因为网络或者系统故障，无法返回操作成功的响应）。</p>
+<h4 id="2242-失效转移"><a class="markdownIt-Anchor" href="#2242-失效转移"></a> <strong>2.2.4.2</strong> <em><strong>失效转移</strong></em></h4>
+<p>【推荐】在任意一个数据副部不可访问时，需支持失效转移策略。</p>
+<p>失效转移是保证任意一个副本不可访问时，可以快速切换访问其他副本，保证系统整体可用。对于采用失效转移保证存储高可用的方案至少要包含如下步骤：</p>
+<p>l 失效确认</p>
+<p>通过心跳检测或者访问失败来判断服务器不可用。对于应用程序的访问失败报告，控制中心还需要再一次发送心跳检测进行确认，以免错误判断服务不可用。</p>
+<p>l 访问转移</p>
+<p>确认某台数据服务不可用后，就需要将数据读写访问重新路由到其他服务器上。对于完全对等存储的服务器，当其中一台宕机后，应用程序根据配置直接切换到对等服务器上。如果存储不对等，就需要重新计算路由，选择存储服务器。</p>
+<p>l 数据恢复</p>
+<p>因为某台服务器数据服务不可用，所以数据存储的副本数目会减少，必须将副本的数目恢复到系统设定的值，否则，再有服务器宕机时，就可能出现无法访问转移，数据永久丢失的情况。因此系统需要从健康的服务器复制数据，将数据副本数目恢复到设定值。</p>
+<h2 id="23-异地容灾多活"><a class="markdownIt-Anchor" href="#23-异地容灾多活"></a> <strong>2.3</strong> <em><strong>异地******容灾</strong></em>***/多活***</h2>
+<p>【推荐】集群类业务产品需利用平台高可用能力设计跨AZ/跨Region容灾/多活架构方案。</p>
+<p>在一些极端场景下，有可能所有服务器都出现故障。例如，典型的有机房断电、机房火灾、地震、水灾等，这些极端情况会导致某个系统所有服务器都故障，或者业务整体瘫痪，而且即使有其他地区的备份，把备份业务系统全部恢复到能够正常提供业务，花费的时间也比较长，可能是半小时，也可能是 12 小时。因为备份系统平时不对外提供服务，可能会存在很多隐藏的问题没有发现。如果业务期望达到即使在此类灾难性故障的情况下，业务也不受影响，或者在几分钟内就能够很快恢复，那么就需要设计异地容灾/多活架构。</p>
+<p>异地容灾/多活架构一般可以分为同城异区（跨AZ）、跨城异地（跨Region）。对于采用异地容灾/多活的架构方案，设计原则建议如下：</p>
+<p>² 保证核心业务的异地多活</p>
+<p>² 保证核心数据最终一致性</p>
+<p>² 采用多种手段同步数据</p>
+<p>² 可只保证绝大部分用户的异地多活</p>
+<h2 id="24-发布流程"><a class="markdownIt-Anchor" href="#24-发布流程"></a> <strong>2.4</strong> <em><strong>发布流程</strong></em></h2>
+<h3 id="241-部署发布策略"><a class="markdownIt-Anchor" href="#241-部署发布策略"></a> <strong>2.4.1</strong> <em><strong>部署发布策略</strong></em></h3>
+<p>【强制】支撑类产品支持蓝绿发布，业务产品支持灰度发布。</p>
+<p>部署应用有很多种方法，一般来说有如下几种方案：</p>
+<p>Ø 停机发布：停机部署就是简单地把现有版本的服务停机，然后部署新的版本。</p>
+<p>Ø 蓝绿发布：在生产线上部署相同数量的新服务，然后当新的服务测试确认 OK 后，把流量切到新的服务这边来。对于有状态服务不建议使用该方式。</p>
+<p>Ø 滚动发布：滚动部署策略是指通过逐个替换应用的所有实例，来缓慢发布应用的一个新版本，线上会同时存在两个版本。</p>
+<p>Ø 灰度发布（金丝雀）：灰度部署是指逐渐将生产环境流量从老版本切换到新版本，也可以选择将一些新的版本先部署到一些用户上，如果没有问题，扩大部署，直到全部用户。</p>
+<p>Ø AB测试发布：AB 测试是同时上线两个版本，然后做相关的比较，最后根据用户体验来确定是否进行灰度发布新版本。</p>
+<p>当发布到开发或者模拟环境时，停机或者滚动部署是一个好选择，因为干净和快速。当发布到生产环境时，滚动部署或者蓝绿部署通常是一个好选择，但新平台的主流程测试是必须的。</p>
+<p>如果应用缺乏测试或者对软件的功能和稳定性影响缺乏信心，那么可以使用灰度部署或者 <code>AB</code> 测试发布。如果业务需要根据地理位置、语言、操作系统或者浏览器特征等参数来给一些特定的用户测试，那么可以采用 <code>AB</code> 测试发布技术。</p>
+<h3 id="242-热升级"><a class="markdownIt-Anchor" href="#242-热升级"></a> <strong>2.4.2</strong> <em><strong>热升级</strong></em></h3>
+<p>【推荐】核心组件或者服务需支持热升级/热更新机制。</p>
+<p>所谓热升级，实际上就是在程序/服务不停止的前提下，通过增加、修改、删除相关功能模块，达到功能升级的目的。对于可用性要求高，用户需要业务零宕机的应用场景，建议实现不停服热升级方案，具体技术方案可参考附录中Nginx热升级/热更新、进程热升级的实现原理。</p>
+<h2 id="25-系统监控"><a class="markdownIt-Anchor" href="#25-系统监控"></a> <strong>2.5</strong> <em><strong>系统******监控</strong></em></h2>
+<p>【强制】不允许没有监控的系统上线，既所有业务必须实现完整的监控机制。</p>
+<p>建议参考如下方案：</p>
+<p>l 监控数据采集</p>
+<p>建议采用全方位立体化监控方案，涉及的所有的相关信息都要监控起来，共分为5层，具体各层和含义如下：</p>
+<p>业务层：收集和分析业务层的访问量、成功率等指标。例如当系统被刷的时候，业务层能够一目了然的看出访问量会增加很多</p>
+<p>应用服务层：应用服务层指的是以URI为维度的分析，可以看到某个URI的访问量、HTTP响应码分布、HTTP响应时间等指标。应用服务层与业务层并不是一 一对应的关系，一个业务可能对应多个应用服务层的URI，一个URI也可能对应多个业务层的业务。</p>
+<p>接口调用层：接口调用层指的是系统依赖的外部系统接口，收集的信息包括访问情况，包括时延、错误码、次数等，当外部系统故障导致我们的业务故障时，通过接口调用层就能够快速的定位具体问题。</p>
+<p>基础组件层： 基础组件层指系统依赖的底层组件，例如容器、数据库、缓存、消息队列。不同的组件收集的信息不一样，例如数据库MySQL的监控指标包括连接数、请求数、查询行数、更新行数等，而缓存memcached包括使用率、踢出率、命中率等。</p>
+<p>基础设施层：基础设施层指操作系统状态、网络状态，收集的信息包括cpu使用率、内存使用率、网卡流量、连接数等。</p>
+<p>l 监控管理</p>
+<p>系统报警： 设置阈值。当达到阈值，及时触发告警（短信、邮件、通信工具均可），通过及时判断状况，防患于未然。</p>
+<p>失效转移： 监控系统可以在发现故障的情况下主动通知应用进行失效转移。</p>
+<p>自动优雅降级：优雅降级是为了应付突然爆发的访问高峰，主动关闭部分功能，释放部分资源，以保证核心功能的优先访问。</p>
+<h1 id="3-附录"><a class="markdownIt-Anchor" href="#3-附录"></a> <strong>3</strong> <em><strong>附录</strong></em></h1>
+<h2 id="31-高可用架构模式"><a class="markdownIt-Anchor" href="#31-高可用架构模式"></a> <strong>3.1</strong> <em><strong>高可用******架构模式</strong></em></h2>
+<h3 id="311-计算高可用"><a class="markdownIt-Anchor" href="#311-计算高可用"></a> <strong>3.1.1</strong> <em><strong>计算高可用</strong></em></h3>
+<p>这里的“计算”指的是业务的逻辑处理。计算有一个特点就是无论在哪台机器上进行计算，同样的算法和输入数据，产出的结果都是一样的。</p>
+<p>计算高可用架构的设计复杂度主要体现在任务管理方面，即当任务在某台服务器上执行失败后，如何将任务重新分配到新的服务器进行执行。所以计算业务的一个显著的特点是应用的无状态性。</p>
+<p>所谓的 无状态 的应用是指应用服务器不保存业务的上下文信息，而仅根据每次请求提交的数据进行相应的业务逻辑处理，多个服务实例之间完全对等，请求提交到任意服务器，处理结果都是完全一样的。</p>
+<p>根据应用场景及业务需求计算高可用架构可使用如下方案：主备、主从和集群。</p>
+<h4 id="3111-主备"><a class="markdownIt-Anchor" href="#3111-主备"></a> <strong>3.1.1.1</strong> <em><strong>主备</strong></em></h4>
+<p>主备架构是计算高可用最简单的架构，因为计算高可用的主备架构无须数据复制，其基本的架构示意图如下：</p>
+<img src="/images/gaokeyong4.png" alt="img" style="zoom:25%;">
+<p>主备方案的详细设计参考如下：</p>
+<p>Ø 主机执行所有计算任务。例如，读写数据、执行操作等。</p>
+<p>Ø 当主机故障（例如，主机宕机）时，任务分配器不会自动将计算任务发送给备机，此时系统处于不可用状态。</p>
+<p>Ø 如果主机能够恢复（不管是人工恢复还是自动恢复），任务分配器继续将任务发送给主机。</p>
+<p>Ø 如果主机不能够恢复（例如，机器硬盘损坏，短时间内无法恢复），则需要人工操作，将备机升为主机，然后让任务分配器将任务发送给新的主机（即原来的备机）；同时，为了继续保持主备架构，需要人工增加新的机器作为备机。</p>
+<p>计算高可用的主备架构也比较适合与内部管理系统、后台管理系统这类使用人数不多、使用频率不高的业务，不太适合在线的业务。</p>
+<h4 id="3112-主从"><a class="markdownIt-Anchor" href="#3112-主从"></a> <strong>3.1.1.2</strong> <em><strong>主从</strong></em></h4>
+<p>计算高可用的主从架构中的从机也是要执行任务的。任务分配器需要将任务进行分类，确定哪些任务可以发送给主机执行，哪些任务可以发送给备机执行，其基本的架构示意图如下：</p>
+<img src="/images/gaokeyong5.png" alt="img" style="zoom:25%;">
+<p>主从方案详细设计：</p>
+<p>Ø 正常情况下，主机执行部分计算任务（如图中的“计算任务 A”），备机执行部分计算任务（如图中的“计算任务 B”）。</p>
+<p>Ø 当主机故障（例如，主机宕机）时，任务分配器不会自动将原本发送给主机的任务发送给从机，而是继续发送给主机，不管这些任务执行是否成功。</p>
+<p>Ø 如果主机能够恢复（不管是人工恢复还是自动恢复），任务分配器继续按照原有的设计策略分配任务，即计算任务 A 发送给主机，计算任务 B 发送给从机。</p>
+<p>Ø 如果主机不能够恢复（例如，机器硬盘损坏，短时间内无法恢复），则需要人工操作，将原来的从机升级为主机（一般只是修改配置即可），增加新的机器作为从机，新的从机准备就绪后，任务分配器继续按照原有的设计策略分配任务。</p>
+<p>主从架构与主备架构相比，优缺点有：</p>
+<p>² 优点：主从架构的从机也执行任务，发挥了从机的硬件性能。</p>
+<p>² 缺点：主从架构需要将任务分类，任务分配器会复杂一些。</p>
+<h4 id="3113-集群"><a class="markdownIt-Anchor" href="#3113-集群"></a> <strong>3.1.1.3</strong> <em><strong>集群</strong></em></h4>
+<p>主备架构和主从架构通过冗余一台服务器来提升可用性，且需要人工来切换主备或者主从。这样的架构虽然简单，但存在一个主要的问题：人工操作效率低、容易出错、不能及时处理故障。因此在可用性要求更加严格的场景中，我们需要系统能够自动完成切换操作，这就是高可用集群方案。</p>
+<p>高可用集群方案建议采用负载均衡集群架构，架构示意图如下：</p>
+<img src="/images/gaokeyong6.png" alt="img" style="zoom:25%;">
+<p>负载均衡集群详细设计：</p>
+<p>Ø 正常情况下，任务分配器采取某种策略（随机、轮询等）将计算任务分配给集群中的不同服务器。</p>
+<p>Ø 当集群中的某台服务器故障后，任务分配器不再将任务分配给它，而是将任务分配给其他服务器执行。</p>
+<p>Ø 当故障的服务器恢复后，任务分配器重新将任务分配给它执行。</p>
+<p>负载均衡集群的设计需要包含如下两点：</p>
+<p>Ø 任务分配器需要选取分配策略：例如选择轮询还是随机的策略。</p>
+<p>Ø 任务分配器需要检测服务器状态：状态监测相对复杂一些，既要检测服务器的状态，例如服务器是否宕机、网络是否正常等，同时还要检测任务的运行状态，例如任务是否卡死，是否执行时间过长等。</p>
+<h3 id="312-存储高可用"><a class="markdownIt-Anchor" href="#312-存储高可用"></a> <strong>3.1.2</strong> <em><strong>存储******高可用</strong></em></h3>
+<p>存储高可用方案的本质都是通过将数据复制到多个存储设备，通过数据冗余的方式来实现高可用，其复杂性主要体现在如何应对复制延迟和中断导致的数据不一致问题。</p>
+<p>常见的高可用存储架构有主备复制、主从复制、集群和分区。</p>
+<h4 id="3121-主备复制"><a class="markdownIt-Anchor" href="#3121-主备复制"></a> <strong>3.1.2.1</strong> <em><strong>主备复制</strong></em></h4>
+<p>存储高可用方案的本质都是通过将数据复制到多个存储设备，通过数据冗余的方式来实现高可用，其复杂性主要体现在如何应对复制延迟和中断导致的数据不一致问题。</p>
+<p>下面是标准的主备复制方案架构图：</p>
+<img src="/images/gaokeyong7.png" alt="img" style="zoom:25%;">
+<p>主备复制方案的优点有：</p>
+<p>Ø 主备复制架构中，客户端可以不感知备机的存在。即使灾难恢复后，原来的备机被人工修改为主机后，对于客户端来说，只是认为主机的地址换了而已，无须知道是原来的备机升级为主机。</p>
+<p>Ø 主备复制架构中，主机和备机之间，只需要进行数据复制即可，无须进行状态判断和主备切换这类复杂的操作。</p>
+<p>主备复制方案的缺点有：</p>
+<p>Ø 主备复制架构中，故障后需要人工干预，无法自动恢复。</p>
+<p>综合主备复制架构的优缺点，内部的后台管理系统使用主备复制架构的情况会比较多，例如运维管理系统，因为这类系统的数据变更频率低，即使在某些场景下丢失数据，也可以通过人工的方式补全。</p>
+<h4 id="3122-主从复制"><a class="markdownIt-Anchor" href="#3122-主从复制"></a> <strong>3.1.2.2</strong> <em><strong>主从******复制</strong></em></h4>
+<p>与主备复制架构比较类似，主要的差别点在于从机正常情况下也是要提供读的操作。</p>
+<p>下面是标准的主从复制方案架构图：</p>
+<p>主从复制与主备复制相比，优点有：</p>
+<p>Ø 主从复制在主机故障时，读操作相关的业务可以继续运行。</p>
+<p>Ø 主从复制架构的从机提供读操作，发挥了硬件的性能。</p>
+<p>缺点有：</p>
+<p>Ø 主从复制架构中，客户端需要感知主从关系，并将不同的操作发给不同的机器进行处理，复杂度比主备复制要高。</p>
+<p>Ø 主从复制架构中，从机提供读业务，如果主从复制延迟比较大，业务会因为数据不一致出现问题。故障时需要人工干预。</p>
+<p>综合主从复制的优缺点，一般情况下，写少读多的业务使用主从复制的存储架构比较多。例如，论坛、BBS、新闻网站这类业务，此类业务的读操作数量是写操作数量的 10 倍甚至 100 倍以上。</p>
+<h4 id="3123-集群和分区"><a class="markdownIt-Anchor" href="#3123-集群和分区"></a> <strong>3.1.2.3</strong> <em><strong>集群和分区</strong></em></h4>
+<p>在主备复制和主从复制模式中，都由一个共性问题：</p>
+<p>每个机器上存储的都是全量数据。但是，单机的数据存储量总是有上限的，当数据量上升为 TB 级甚至 PB 级数据，单机终究有无法支撑的时候。这时，就需要对数据进行分片（sharding）。</p>
+<p>分片后的节点可以视为一个独立的子集，针对子集，任然需要保证高可用。</p>
+<img src="/images/gaokeyong8.png" alt="img" style="zoom:25%;"> 
+<h2 id="32-热升级"><a class="markdownIt-Anchor" href="#32-热升级"></a> <strong>3.2</strong> <em><strong>热升级</strong></em></h2>
+<h3 id="321-nginx热升级"><a class="markdownIt-Anchor" href="#321-nginx热升级"></a> <strong>3.2.1</strong> <em><strong>Nginx热升级</strong></em></h3>
+<p><img src="/images/gaokeyong9.png" alt="nginx热升级"></p>
+<p>master 进程启动了四个绿色的 worker 进程，当更新了Nginx 的 binary 以后，向老 master 进程发送了 SIGUSR2 信号，这个时候老 master 进程会把自己的 pid 文件改名，也就是是黄色的这些进程。</p>
+<p>而新的 master 进程是老 master 进程的子进程，但这个子进程是使用了新的 binary 载入来启动的，在中间这个流程新老 Nginx 并存，但是老的 master 开始关闭监听端口，所有的黄色老的 worker 进程开始优雅地退出，在完成以后就会出现只有新的 master 进程存在的场景。</p>
+<p>当退出老 master 进程以后不能进行回滚，如果想回滚，就需要再走一次热升级流程，用备份好的老 Nginx 文件作为新的热升级文件（因此建议备份旧的 Nginx 文件）。</p>
+<p>在一个父进程退出，而它的一个或多个子进程还在运行时，那么这些子进程将成为孤儿进程。孤儿进程将被 init 进程(进程号为1)所收养，并由 init 进程对它们完成状态收集工作。所以老 master 进程退出后，新的 master 进程并不会退出。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://chuanyichuan.github.io/2020/04/19/高可用架构设计/" title="高可用架构设计" target="_blank" rel="external">http://chuanyichuan.github.io/2020/04/19/高可用架构设计/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/luxiaowan" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="../../../../images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/luxiaowan" target="_blank"><span class="text-dark">串一串</span><small class="ml-1x">浪人</small></a></h3>
+        <div>断舍离</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="../Kafka在数据传递上的场景分析/" title="Kafka在数据传递上的场景分析"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="../../18/Kafka应用场景/" title="Kafka应用场景"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 cc
+        
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="../../../../js/plugin.min.js"></script>
+<script src="../../../../js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '../../../../content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="../../../../js/insight.js"></script>
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

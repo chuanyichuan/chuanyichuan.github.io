@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000">
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top">
+  
+  
+  <title>微信抢红包设计 | 串一串</title>
+  <meta name="description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
+<meta name="keywords" content="面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信抢红包设计">
+<meta property="og:url" content="http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/index.html">
+<meta property="og:site_name" content="串一串">
+<meta property="og:description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525115828021.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210525120415369.png">
+<meta property="og:updated_time" content="2021-05-26T07:09:07.516Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="微信抢红包设计">
+<meta name="twitter:description" content="A 现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。 在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/image-20210525115828021.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="串一串" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/luxiaowan" target="_blank">
+          <img class="img-circle img-rotate" src="../../../../images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">串一串</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">浪人</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Suzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="../../../../.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="../../../../archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="../../../../repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="../../../../books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="../../../../links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="../../../../about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>断舍离!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/DDD/">DDD</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringCloud/">SpringCloud</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Gateway/">Gateway</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Seata/">Seata</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式事务/">分布式事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式锁/">分布式锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/网关/">网关</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/锁/">锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.17px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/Gateway/" style="font-size: 13px;">Gateway</a> <a href="../../../../tags/JVM/" style="font-size: 13.5px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.17px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.33px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.17px;">MySQL</a> <a href="../../../../tags/Redis/" style="font-size: 13px;">Redis</a> <a href="../../../../tags/Seata/" style="font-size: 13px;">Seata</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13.17px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.17px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.67px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/事务/" style="font-size: 13px;">事务</a> <a href="../../../../tags/分布式事务/" style="font-size: 13px;">分布式事务</a> <a href="../../../../tags/分布式锁/" style="font-size: 13px;">分布式锁</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.17px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/网关/" style="font-size: 13px;">网关</a> <a href="../../../../tags/锁/" style="font-size: 13px;">锁</a> <a href="../../../../tags/阿里/" style="font-size: 13.33px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.83px;">面试</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/08/">八月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/07/">七月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../08/18/服务器k8s部署脚本/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../08/18/服务器k8s部署脚本/" class="title">服务器K8s部署脚本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-18T08:31:00.000Z" itemprop="datePublished">2021-08-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../08/16/DDD设计架构初识/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/DDD/">DDD</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../08/16/DDD设计架构初识/" class="title">DDD设计架构初识</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-16T05:14:00.000Z" itemprop="datePublished">2021-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/22/Raft协议探析/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/分布式/">分布式</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/22/Raft协议探析/" class="title">Raft协议探析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-22T15:23:00.000Z" itemprop="datePublished">2021-07-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/04/mysqldump备份与恢复/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/04/mysqldump备份与恢复/" class="title">Mysqldump备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-04T12:00:00.000Z" itemprop="datePublished">2021-07-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="title">LibreSSL SSL_connect SSL_ERROR_SYSCALL in Connection to github.com 443</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-16T07:00:00.000Z" itemprop="datePublished">2021-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-微信抢红包设计" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      微信抢红包设计
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="" class="article-date">
+	  <time datetime="2021-05-17T17:22:00.000Z" itemprop="datePublished">2021-05-18</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="../../../../categories/架构设计/">架构设计</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="../../../../tags/面试/">面试</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.9k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 13(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="a"><a class="markdownIt-Anchor" href="#a"></a> A</h3>
+<p>现在的工作或面试中，很多人动辄就会被问到高并发的问题，但并不是所有研发同学都有机会参与到并发很高的项目中，很多人准备这块内容也纯粹是为了面试，真正的工作中，还是单纯的CRUD，那么高并发就不重要了吗？那是相当的重要，重要到你不会就通不过面试的程度。高并发可以是高接口、高服务、高系统，这次就从微信抢红包来简单的说说这块。</p>
+<p>在设计之前，先来拆解一下微信抢红包的大致流程：发红包、扣款、收红包、拆红包、领取金额、入账、查看红包领取记录、红包被领取通知。从这7个步骤着手简单分析一下（实际不止这几个），这几项哪些是会影响用户体验的呢？感觉每一个都会，但相对来说收红包、拆红包的实时性体验更重要，并且这两者属于是并发量最高的，比如在一个100人的群中发一个10人份的红包，来分析一下请求量：</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Request Quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发红包</td>
+<td>1</td>
+</tr>
+<tr>
+<td>扣款</td>
+<td>1</td>
+</tr>
+<tr>
+<td>收红包</td>
+<td>100</td>
+</tr>
+<tr>
+<td>拆红包</td>
+<td>100</td>
+</tr>
+<tr>
+<td>领取金额</td>
+<td>10~100</td>
+</tr>
+<tr>
+<td>入账</td>
+<td>10</td>
+</tr>
+<tr>
+<td>查看红包领取记录</td>
+<td>100+</td>
+</tr>
+<tr>
+<td>红包被领取通知</td>
+<td>10</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>实际上对于一个红包来说，可能带来群内用户数的请求量，如果放在一个五百人的群中，那么一个收红包的请求数可能就会达到500，春晚期间每秒百万个红包，则带来的请求量就是一秒几个亿的级别，当然这是一个理论上的数据，如果想要达到几个亿的并发量，那我不会~</p>
+<h3 id="分析"><a class="markdownIt-Anchor" href="#分析"></a> 分析</h3>
+<h4 id="1-硬件"><a class="markdownIt-Anchor" href="#1-硬件"></a> 1. 硬件</h4>
+<p>硬件么，也就是服务器了，常常被调侃的往往最有效：出现了并发瓶颈怎么办？答：加机器！加内存！加磁盘！加带宽！是不是当听到这个回答之后感觉对方挺没意思，那么如果在工程的JVM、代码、队列、缓存等等一系列都完善好了，这时候怎么办？只能具体问题具体分析了：如果瓶颈在内存上，那么就加内存；如果瓶颈在磁盘上，空间不足那么就加磁盘，写读速度太低，那么就换SSD；如果瓶颈在CPU上，那么就加机器，横向扩充CPU；如果是网络问题，那么就加带宽。</p>
+<p>通过以上分析，是不是觉得加机器还是挺有道理的。加机器会带来的优势：内存大、磁盘读写快、CPU管够、网络嗖嗖的</p>
+<h4 id="2-代码"><a class="markdownIt-Anchor" href="#2-代码"></a> 2. 代码</h4>
+<p>在加机器之前，都应该先把服务工程的代码优化到极致，代码优化就不细说了，属于是日常积累。</p>
+<h4 id="3-锁"><a class="markdownIt-Anchor" href="#3-锁"></a> 3. 锁</h4>
+<p>乐观锁和悲观锁的正确使用能够带来不同的性能指标，</p>
+<h3 id="设计"><a class="markdownIt-Anchor" href="#设计"></a> 设计</h3>
+<h4 id="1-发收红包"><a class="markdownIt-Anchor" href="#1-发收红包"></a> 1. 发收红包</h4>
+<p>红包的并发有多高？简单的计算一下：十万个人，每个人同时发一个红包，发红包的并发量就是十万，但实际上在高峰期时期，不可能只有十万个人在发红包。拒资料记载：在2017年除夕当天，收发微信红包的数量达到了142亿，按照一天86400秒计算的话，平均每秒就有16万个红包发出，也就是持续一整天每秒并发16万，当然流量不可能这么平均，资料上记录当天最高峰值达到了76万每秒，是平均值的5倍左右。</p>
+<p>发红包是允许发送失败(告诉用户网络问题，让用户自我怀疑)，但不允许发送成功之后丢失数据，因为涉及到钱，数据安全性和一致性的要求必须非常高，先不考虑数据的安全性和一致性，这里可以使用中间件来保证。在并发量较高的情况下，发红包请求发出之后，服务器并不能每一个请求都及时处理，所以这里如果把同步搞为异步，会解决什么问题（不涉及扣款）：</p>
+<blockquote>
+<p>同步</p>
+</blockquote>
+<p><code>接收发红包请求-&gt;通知群内所有人-&gt;全部通知完成-&gt;反馈用户红包发送成功-&gt;准备接收发红包请求</code></p>
+<p>从同步请求来看，一台实例每次只能处理一个请求，如果红包通知的目标人群数量庞大，那么这将是非常耗时的操作，并且如果其中一个用户通知失败（中途有人退群），还可能会影响到全部的通知，造成的延迟将不可预估。当每台实例每秒只能处理一个请求的时候，高峰期的76万个并发则需要76万台实例，公司没那么多银子，砸不起。</p>
+<blockquote>
+<p>异步</p>
+</blockquote>
+<p><code>1. 接收发红包请求-&gt;存入消息队列-&gt;反馈用户红包发送成功-&gt;准备接收发红包请求</code></p>
+<p><code>2. 发红包消息处理器-&gt;拆解消息通知-&gt;存入消息队列</code></p>
+<p><code>3. 通知消息处理器-&gt;发送通知</code></p>
+<p>接着就是异步处理，服务端接收到发红包请求之后立即将请求放入发红包消息处理队列，然后立即反馈用户发送成功，这里耗时的地方只有与消息队列通信这一个，在网络正常的情况下，耗时微乎其微。发红包的请求入队之后按顺序排排好，等待消费端进行消费处理（这里要保证消息不能丢失），接下来就是消息处理器的工作了，对于发红包的用户来说红包已经发成功了，其他人啥时候收到就不关我事了，反正我发出去了。</p>
+<p>至于消息消费的效率问题，就属于是消息中间件的吞吐量问题了，选择和配置相关参数提升吞吐量不算太难的事情，关键要有银子，不然买不起好的机器也没太大用处。发红包消息处理器对收到的消息进行拆解，按用户进行拆分，将拆分后的数据封装成一条条通知消息，并将通知消息放入到通知消息队列中，至于顺序，那就关系不大了，这里一般不需要保证有序，因为没有必要保证收到消息的用户要按照入群的顺序来啊，不然如果真因为网络问题或者中间件吞吐量问题造成了延迟，本群抢到红包的就永远都是最先入群的那几个人了。</p>
+<p>通知消息处理器从队列中依次处理消息，按个儿通知用户，此刻用户就能发现有一个红包出现。消息通知晚的那就只能手慢无了。</p>
+<p><em><strong>所以有时候抢不到红包不一定是你手速慢，也可能是没那个命</strong></em></p>
+<h4 id="2-拆红包"><a class="markdownIt-Anchor" href="#2-拆红包"></a> 2. 拆红包</h4>
+<p>当我们看到红包之后，也不知道它有没有被抢完，第一反应肯定都是我要点它，点击红包会有一个加载的过程，加载的过程就是在向后台请求当前时刻红包是否已被抢完，如果没被抢完则会出现一个大大的<strong>開</strong>，点击开抢（一直没搞明白为什么不依据定向红包、手气红包这种红包类型变更按钮，比如定向叫拆[没福气被拆迁，可以被拆红包也不错]，或者手气红包叫抢[不知道是不是有限制不能用抢这个字]）。</p>
+<p>​						<img src="/images/image-20210525115828021.png" alt="image-20210525115828021" style="zoom:50%; ">               														<img src="/images/image-20210525120415369.png" alt="image-20210525120415369" style="zoom:50%;"></p>
+<p>那么加载过程是异步还是同步的呢？如果是异步请求，那么请求发送出去立即返回，等异步处理完后再反馈到客户端，如果异步排队的话，那这个请求时长就不可控了，所以这里按照操作行为来看，采用同步请求更适合，既然是同步请求，那么在请求返回之前就需要hang住线程资源，所以就只能想办法把hang住的时间变短，这个时候缓存好像就起到了很大的作用，如果单纯的使用数据库，在数据库资源竞争上又是一个大问题，涉及到数据的变更，必定要和数据库锁打交道，锁又是性能首害，而用Redis的话，天生的单线程处理+reactor主从线程池模型提供了高性能保障，将读写压力从数据库转移到每秒几万并发的Redis，请求时间缩短很多，直接的提升了加载接口的并发量。</p>
+<p>那么是不是每一次点击红包都要去后台请求一次状态呢？当然不行，已经被领取完的红包还去后台请求干啥？钱会退回来吗，还是状态会变？所以已经被领取完的红包信息完全可以在客户端缓存一份，每次请求就不用和服务端进行通信了，把流量控制在客户端，减缓服务端的压力，同时也提升了用户体验（没有网络请求比本地请求快的道理），哦吼，好像不错~</p>
+<p>点击红包的动作就这，就是一个<strong>同步请求+服务端远程缓存+客户端缓存</strong>。</p>
+<p>继续深入思考一下，这几个步骤还有哪一步可以继续优化一下，同步改异步在前面已经说过了，好像可行性不高，客户端缓存可以减少网络请求，性能提升也挺高，好像也没有更优的方案了，那么就只剩服务端远程缓存了，上面讨论到服务端缓存使用Redis，也就是一个分布式缓存，使用Redis的目的就是不论请求路由到哪一个节点都可以访问到同一个资源，大致的流程是这样的：</p>
+<p><code>服务端接收请求-&gt;与Redis服务器发送请求-&gt;读取Redis数据-&gt;Redis服务器返回数据-&gt;服务端返回数据</code></p>
+<p>如果采用本地缓存的话，会是什么样子呢？看下流程：</p>
+<p><code>服务端接收请求-&gt;读取本地缓存数据-&gt;服务端返回数据</code></p>
+<p>少了与Redis服务器建立连接的过程，在网络资源紧张的情况下，每秒几十万次读，好像问题也不大（不要说Redis单机只几万，哪个公司产线会只用一台单机版的Redis），每次读耗时0.00001秒的话，70万次就是7秒，貌似挺多的，并且一次读取也不可能只0.00001秒的时间，所以这里对于当前业务来说属于一个可优化的性能瓶颈，优化的点就是把访问远程内存改为访问本地内存，减少网络开销，直接读取服务实例所在机器内存，效率绝对杠杠的。</p>
+<p>使用本地缓存可以提升性能，但是会带来另一个问题：只有关于这个红包的所有请求都发送到固定的一台机器上，才能正确的使用本地缓存，否则如果出现请求离散的情况，本地缓存就是一个诟病了。所以如果想使用本地缓存的话，我们就要控制请求路由，让同一个红包的请求都发送到固定的一台实例上，这要怎么整？我们知道常用的请求路由方式有：轮询、权重、ip-hash、fair（第三方）、url-hash（第三方），轮询好像不行，每一次请求都被路由到不同的实例上，权重好像也不行，ip-hash只能够保证同一个客户端的请求路由到固定的实例，fair是按后端服务器的响应时间来分配请求，更不合适了，还有一种根据url计算hash，也不合适，不可能所有的请求都是一个hash值。常用的路由好像都不合适，但是我们发现了一种能让指定请求都路由到一台实例上的方式，ip-hash和url-hash，那么我们能不能针对红包搞一个read-packet-hash算法，将同一个红包的所有操作请求都路由到一台实例上，貌似可以，那么就不介绍具体实现了，网关层做控制很简单：对每一个红包在创建的时候都生成一个全局唯一ID，后续针对这个ID计算哈希进行路由。</p>
+<p>使用本地缓存的话，如果有人杠起来：一台实例挂了的话岂不是这台实例的所有红包数据都丢失了？那你咋说？当然怼回去：Redis某ms节点挂了的话影响的服务实例更多，咋整？只能尽可能的保证节点的稳定性，但也不是说使用了本地缓存就弃用远程缓存，两者是相辅相成、互相同步的关系：本地-&gt;远程 &amp;&amp; 远程-&gt;本地。</p>
+<h4 id="3-领取金额"><a class="markdownIt-Anchor" href="#3-领取金额"></a> 3. 领取金额</h4>
+<p>红包都被拆开了，是不是就可以分钱了呢？是的，可以分钱了，分钱的并发量在红包数量~群内人数之间，为什么说能够达到群内人数这么高的并发，如果所有人都在同一时刻点开红包然后同一秒内点<strong>開</strong>，那么领红包的接口并发量就上来了，领取功能简单，关键就在于金额怎么分配，我们依据单例的懒汉模式和饿汉模式来分析一下：</p>
+<blockquote>
+<p>懒汉模式</p>
+</blockquote>
+<p>懒汉模式就是每一个请求来到之后再做相应的处理，数据处理为同步的。</p>
+<blockquote>
+<p>饿汉模式</p>
+</blockquote>
+<p>饿汉模式就是在请求到来之前，先把数据准备好，数据处理为异步的。</p>
+<hr>
+<p>这两种模式应该怎么选择？同步模式下，每次请求都需要通过算法计算一次所得金额，并发情况下需要争抢同一个资源，每一次计算的耗时造成过多的锁等待；而异步模式下，在抢红包请求到来之前，每个人所得金额都已经排好排等着被领走了，只需要依据先来先得的规则按需取走即可，计算时间成本下降了，锁等待时间就相应的下降了，并发就提升了。</p>
+<p><em><strong>1…异步刷库到账</strong></em></p>
+<h4 id="4-查看红包领取记录"><a class="markdownIt-Anchor" href="#4-查看红包领取记录"></a> 4. 查看红包领取记录</h4>
+<p>查看红包领取记录属于是一个常规Action，不论什么时候都可以查看过往红包的领取记录，上面讲了可以将已领完的红包数据缓存到客户端，那么在服务端怎么处理？Elasticsearch、MongoDB、HBASE这些先不讨论，就拿MySQL来说，除夕一天142亿个红包，如果平均每个红包都有10个小包，那就是1420亿条领取记录，突然一下给整不会了，没处理过这么大的数据量，我先想想</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/" title="微信抢红包设计" target="_blank" rel="external">http://chuanyichuan.github.io/2021/05/18/微信抢红包设计/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/luxiaowan" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="../../../../images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/luxiaowan" target="_blank"><span class="text-dark">串一串</span><small class="ml-1x">浪人</small></a></h3>
+        <div>断舍离</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="../../20/Spring参数注入方式/" title="Spring参数注入方式"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="../../17/整理面试题/" title="整理面试题"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 cc
+        
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="../../../../js/plugin.min.js"></script>
+<script src="../../../../js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '../../../../content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="../../../../js/insight.js"></script>
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

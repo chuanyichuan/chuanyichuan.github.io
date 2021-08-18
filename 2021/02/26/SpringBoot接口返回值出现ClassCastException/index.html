@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000">
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top">
+  
+  
+  <title>SpringBoot接口返回值出现ClassCastException | 串一串</title>
+  <meta name="description" content="不知道有没有同学在开发过程中遇到过这样的一个问题：写好了一个接口，然后在请求的时候后台报错，详细异常栈信息： 12345java.lang.ClassCastException: cc.kevinlu.meeting.global.BaseResult cannot be cast to java.lang.String	at org.springframework.http.converter.">
+<meta name="keywords" content="SpringBoot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot接口返回值出现ClassCastException">
+<meta property="og:url" content="http://chuanyichuan.github.io/2021/02/26/SpringBoot接口返回值出现ClassCastException/index.html">
+<meta property="og:site_name" content="串一串">
+<meta property="og:description" content="不知道有没有同学在开发过程中遇到过这样的一个问题：写好了一个接口，然后在请求的时候后台报错，详细异常栈信息： 12345java.lang.ClassCastException: cc.kevinlu.meeting.global.BaseResult cannot be cast to java.lang.String	at org.springframework.http.converter.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210226132209847.png">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210226154106328.png">
+<meta property="og:updated_time" content="2021-04-20T14:44:47.347Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBoot接口返回值出现ClassCastException">
+<meta name="twitter:description" content="不知道有没有同学在开发过程中遇到过这样的一个问题：写好了一个接口，然后在请求的时候后台报错，详细异常栈信息： 12345java.lang.ClassCastException: cc.kevinlu.meeting.global.BaseResult cannot be cast to java.lang.String	at org.springframework.http.converter.">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/image-20210226132209847.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://chuanyichuan.github.io/2021/02/26/SpringBoot接口返回值出现ClassCastException/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="串一串" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/luxiaowan" target="_blank">
+          <img class="img-circle img-rotate" src="../../../../images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">串一串</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">浪人</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Suzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="../../../../.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="../../../../archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="../../../../repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="../../../../books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="../../../../links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="../../../../about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>断舍离!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/DDD/">DDD</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringCloud/">SpringCloud</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Gateway/">Gateway</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Seata/">Seata</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式事务/">分布式事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式锁/">分布式锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/网关/">网关</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/锁/">锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.17px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/Gateway/" style="font-size: 13px;">Gateway</a> <a href="../../../../tags/JVM/" style="font-size: 13.5px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.17px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.33px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.17px;">MySQL</a> <a href="../../../../tags/Redis/" style="font-size: 13px;">Redis</a> <a href="../../../../tags/Seata/" style="font-size: 13px;">Seata</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13.17px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.17px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.67px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/事务/" style="font-size: 13px;">事务</a> <a href="../../../../tags/分布式事务/" style="font-size: 13px;">分布式事务</a> <a href="../../../../tags/分布式锁/" style="font-size: 13px;">分布式锁</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.17px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/网关/" style="font-size: 13px;">网关</a> <a href="../../../../tags/锁/" style="font-size: 13px;">锁</a> <a href="../../../../tags/阿里/" style="font-size: 13.33px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.83px;">面试</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/08/">八月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/07/">七月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../08/18/服务器k8s部署脚本/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../08/18/服务器k8s部署脚本/" class="title">服务器K8s部署脚本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-18T08:31:00.000Z" itemprop="datePublished">2021-08-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../08/16/DDD设计架构初识/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/DDD/">DDD</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../08/16/DDD设计架构初识/" class="title">DDD设计架构初识</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-16T05:14:00.000Z" itemprop="datePublished">2021-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/22/Raft协议探析/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/分布式/">分布式</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/22/Raft协议探析/" class="title">Raft协议探析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-22T15:23:00.000Z" itemprop="datePublished">2021-07-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/04/mysqldump备份与恢复/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/04/mysqldump备份与恢复/" class="title">Mysqldump备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-04T12:00:00.000Z" itemprop="datePublished">2021-07-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="title">LibreSSL SSL_connect SSL_ERROR_SYSCALL in Connection to github.com 443</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-16T07:00:00.000Z" itemprop="datePublished">2021-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-SpringBoot接口返回值出现ClassCastException" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBoot接口返回值出现ClassCastException
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="" class="article-date">
+	  <time datetime="2021-02-26T04:50:00.000Z" itemprop="datePublished">2021-02-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="../../../../categories/BUG/">BUG</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="../../../../tags/SpringBoot/">SpringBoot</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 9(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>不知道有没有同学在开发过程中遇到过这样的一个问题：写好了一个接口，然后在请求的时候后台报错，详细异常栈信息：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">java<span class="selector-class">.lang</span><span class="selector-class">.ClassCastException</span>: cc<span class="selector-class">.kevinlu</span><span class="selector-class">.meeting</span><span class="selector-class">.global</span><span class="selector-class">.BaseResult</span> cannot be cast to java<span class="selector-class">.lang</span><span class="selector-class">.String</span></span><br><span class="line">	at org<span class="selector-class">.springframework</span><span class="selector-class">.http</span><span class="selector-class">.converter</span><span class="selector-class">.StringHttpMessageConverter</span><span class="selector-class">.addDefaultHeaders</span>(StringHttpMessageConverter<span class="selector-class">.java</span>:<span class="number">44</span>)</span><br><span class="line">	at org<span class="selector-class">.springframework</span><span class="selector-class">.http</span><span class="selector-class">.converter</span><span class="selector-class">.AbstractHttpMessageConverter</span><span class="selector-class">.write</span>(AbstractHttpMessageConverter<span class="selector-class">.java</span>:<span class="number">211</span>)</span><br><span class="line">	at org<span class="selector-class">.springframework</span><span class="selector-class">.web</span><span class="selector-class">.servlet</span><span class="selector-class">.mvc</span><span class="selector-class">.method</span><span class="selector-class">.annotation</span><span class="selector-class">.AbstractMessageConverterMethodProcessor</span><span class="selector-class">.writeWithMessageConverters</span>(AbstractMessageConverterMethodProcessor<span class="selector-class">.java</span>:<span class="number">290</span>)</span><br><span class="line">	at org<span class="selector-class">.springframework</span><span class="selector-class">.web</span><span class="selector-class">.servlet</span><span class="selector-class">.mvc</span><span class="selector-class">.method</span><span class="selector-class">.annotation</span><span class="selector-class">.RequestResponseBodyMethodProcessor</span><span class="selector-class">.handleReturnValue</span>(RequestResponseBodyMethodProcessor<span class="selector-class">.java</span>:<span class="number">181</span>)</span><br></pre></td></tr></table></figure>
+<p>从异常信息可以看出是出现了<code>ClassCastException</code>，原因是项目中使用了<code>ResponseBodyAdvice</code>对接口返回数据做了一层包装，包装后的对象类型发生了变化，例如下方代码，接口返回的对象类型是<code>String</code>，包装过后则变成了<code>BaseResult</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 接口</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">publishConfig</span><span class="params">(String namespace)</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 包装</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">beforeBodyWrite</span><span class="params">(Object o, MethodParameter methodParameter, MediaType mediaType, Class aClass,</span></span></span><br><span class="line"><span class="function"><span class="params">                                  ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (o <span class="keyword">instanceof</span> BaseResult) &#123;</span><br><span class="line">    <span class="keyword">return</span> o;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> BaseResult.success(o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这好像也没什么问题，为什么会出现<code>ClassCastException</code>呢？出现了异常肯定是要分析异常栈的，我们从异常栈第一行开始看起：</p>
+<p><code>org.springframework.http.converter.StringHttpMessageConverter.addDefaultHeaders(StringHttpMessageConverter.java:44)</code></p>
+<p>问题是从<code>StringHttpMessageConverter#addDefaultHeaders</code>方法抛出来的，进入到方法中，查看此处代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addDefaultHeaders</span><span class="params">(HttpHeaders headers, String s, @Nullable MediaType type)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (headers.getContentType() == <span class="keyword">null</span> ) &#123; <span class="comment">// ①</span></span><br><span class="line">    <span class="keyword">if</span> (type != <span class="keyword">null</span> &amp;&amp; type.isConcrete() &amp;&amp; type.isCompatibleWith(MediaType.APPLICATION_JSON)) &#123;</span><br><span class="line">      <span class="comment">// Prevent charset parameter for JSON..</span></span><br><span class="line">      headers.setContentType(type);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">super</span>.addDefaultHeaders(headers, s, type);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>给①处打个断点，再请求一次后发现请求并没有执行到断点所在行，也就意味着请求并没有进入到该方法，那么推断问题出在方法参数上，巧了，方法参数还真有一个<code>String</code>类型，那么就找一下该方法的调用方：</p>
+<img src="/images/image-20210226132209847.png" alt="image-20210226132209847" style="zoom:50%;">
+<p>发现有两处调用，不知道是哪一个，然后我们来看异常信息的第二行：</p>
+<p><code>org.springframework.http.converter.AbstractHttpMessageConverter.write(AbstractHttpMessageConverter.java:211)</code></p>
+<p>这里告诉了我们，是在<code>AbstractHttpMessageConverter#write</code>方法，在类的第211行代码，老规矩，上代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">final</span> T t, @Nullable MediaType contentType, HttpOutputMessage outputMessage)</span></span></span><br><span class="line"><span class="function">  <span class="keyword">throws</span> IOException, HttpMessageNotWritableException </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> HttpHeaders headers = outputMessage.getHeaders();</span><br><span class="line">  addDefaultHeaders(headers, t, contentType);</span><br><span class="line">  <span class="comment">// 省略无关代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>write</code>接收了一个泛型对象<code>t</code>，这个<code>t</code>可以为任何类型，所以这里还不是异常的根本原因，我们还需要继续往上层调用方冒泡，然后我们根据异常信息第三行找到了<code>AbstractMessageConverterMethodProcessor#writeWithMessageConverters</code>方法，一起来看下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">writeWithMessageConverters</span><span class="params">(@Nullable T value, MethodParameter returnType,</span></span></span><br><span class="line"><span class="function"><span class="params">			ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)</span></span></span><br><span class="line"><span class="function">			<span class="keyword">throws</span> IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException </span>&#123;</span><br><span class="line"></span><br><span class="line">  Object body;</span><br><span class="line">  Class&lt;?&gt; valueType;</span><br><span class="line">  Type targetType;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ①校验原始返回值是否为字符串，原始返回值是指接口方法上声明的返回值，在我们这里，这个就是true</span></span><br><span class="line">  <span class="keyword">if</span> (value <span class="keyword">instanceof</span> CharSequence) &#123;</span><br><span class="line">    body = value.toString();</span><br><span class="line">    valueType = String.class;</span><br><span class="line">    targetType = String.class;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    body = value;</span><br><span class="line">    valueType = getReturnValueType(body, returnType);</span><br><span class="line">    targetType = GenericTypeResolver.resolveType(getGenericType(returnType), returnType.getContainingClass());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 忽略其他代码，包括了流文件判断、校验contentType</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 重点来了，看仔细了哈</span></span><br><span class="line">  <span class="keyword">if</span> (selectedMediaType != <span class="keyword">null</span>) &#123;</span><br><span class="line">    selectedMediaType = selectedMediaType.removeQualityValue();</span><br><span class="line">    <span class="comment">// ②迭代messageConverters，挨个儿的进行转换，先卖个关子，这个messageConverters有哪些，是从哪来的？</span></span><br><span class="line">    <span class="keyword">for</span> (HttpMessageConverter&lt;?&gt; converter : <span class="keyword">this</span>.messageConverters) &#123;</span><br><span class="line">      <span class="comment">// ③校验converter是否为GenericHttpMessageConverter的子类，这个GenericHttpMessageConverter又为何物？</span></span><br><span class="line">      GenericHttpMessageConverter genericConverter = (converter <span class="keyword">instanceof</span> GenericHttpMessageConverter ?</span><br><span class="line">                                                      (GenericHttpMessageConverter&lt;?&gt;) converter : <span class="keyword">null</span>);</span><br><span class="line">      <span class="comment">// ④校验返回值类型是否可以被converter修改</span></span><br><span class="line">      <span class="keyword">if</span> (genericConverter != <span class="keyword">null</span> ?</span><br><span class="line">          ((GenericHttpMessageConverter) converter).canWrite(targetType, valueType, selectedMediaType) :</span><br><span class="line">          converter.canWrite(valueType, selectedMediaType)) &#123;</span><br><span class="line">        <span class="comment">// ⑤获取ResponseBodyAdvice的实现类，并调用beforeBodyWrite方法获取重写后的返回值</span></span><br><span class="line">        body = getAdvice().beforeBodyWrite(body, returnType, selectedMediaType,</span><br><span class="line">                                           (Class&lt;? extends HttpMessageConverter&lt;?&gt;&gt;) converter.getClass(),</span><br><span class="line">                                           inputMessage, outputMessage);</span><br><span class="line">        <span class="keyword">if</span> (body != <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="comment">// 添加相关的header数据</span></span><br><span class="line">          addContentDispositionHeader(inputMessage, outputMessage);</span><br><span class="line">          <span class="comment">// ⑥校验使用哪一种converter输出数据</span></span><br><span class="line">          <span class="keyword">if</span> (genericConverter != <span class="keyword">null</span>) &#123;</span><br><span class="line">            genericConverter.write(body, targetType, selectedMediaType, outputMessage);</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// ☆异常信息中的290行</span></span><br><span class="line">            ((HttpMessageConverter) converter).write(body, selectedMediaType, outputMessage);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">            logger.debug(<span class="string">"Nothing to write: null body"</span>);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的分析可以知道在第①步之后，<code>body</code>为<code>String</code>类型，，但在第⑤步之后<code>body</code>类型变为了<code>BaseResult</code>，但是当前converter为<code>StringHttpMessageConverter</code>，并且在第④步中的<code>converter.canWrite(valueType, selectedMediaType)</code>已经使用<code>String</code>类型校验通过了，所以这里会进入到<code>AbstractHttpMessageConverter#write</code>方法中，这就和异常信息的第二行对上了，那么问题就很明了了，我们把<code>StringHttpMessageConverter</code>从<code>messageConverters</code>中拿掉，然后换成相对应的converter是不是就可以了？那么这些个converter是从哪里来的呢？巧了，在项目中有一个<code>WebMvcConfigurer</code>接口的实现类，里面重写了<code>configureMessageConverters</code>方法，该方法里设置相关的converter：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpConverterConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ①定义Jackson转换器，具体代码省略...</span></span><br><span class="line">    MappingJackson2HttpMessageConverter jacksonConverter = mappingJackson2HttpMessageConverter();</span><br><span class="line">    <span class="comment">// ②定义String转换器，具体代码省略...</span></span><br><span class="line">    StringHttpMessageConverter stringHttpMessageConverter = stringHttpMessageConverter();</span><br><span class="line">    jacksonConverter.setSupportedMediaTypes(<span class="keyword">new</span> LinkedList&lt;MediaType&gt;() &#123;</span><br><span class="line">      &#123;</span><br><span class="line">        add(MediaType.TEXT_HTML);</span><br><span class="line">        add(MediaType.APPLICATION_JSON);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    stringHttpMessageConverter.setSupportedMediaTypes(<span class="keyword">new</span> LinkedList&lt;MediaType&gt;() &#123;</span><br><span class="line">      &#123;</span><br><span class="line">        add(MediaType.TEXT_HTML);</span><br><span class="line">        add(MediaType.APPLICATION_JSON);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">// ③将转换器放入到messageConverter中【注意顺序】</span></span><br><span class="line">    converters.add(stringHttpMessageConverter);</span><br><span class="line">    converters.add(jacksonConverter);</span><br><span class="line">    log.info(<span class="string">"configureMessageConverters加载完毕"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们稍微留意一下第③步，因为<code>messageConverter</code>通过<code>new ArrayList&lt;&gt;()</code>创建的，所以元素顺序是就是存入顺序，那么在迭代的时候也是先使用<code>StringHttpMessageConverter</code>做转换，那么我们是不是把顺序调整一下就可以了？先用<code>MappingJackson2HttpMessageConverter</code>进行处理，是不是就可以了？经测试，确实可以！</p>
+<hr>
+<p>说了这么多，如果我们不自定义converter会咋样？把该类从spring容器中拿掉看下：</p>
+<img src="/images/image-20210226154106328.png" alt="image-20210226154106328" style="zoom:50%;">
+<p>出现了10个converter，这10个是从哪里来的？我们只有从<code>messageConverters</code>发赋值区域开始看了，其是在父类<code>AbstractMessageConverterMethodArgumentResolver</code>中定义和最终赋值的，赋值方式为构造器传入，我们通过构造器一层层冒泡，最终找到了<code>RequestMappingHandlerAdapter</code>类，在这个适配器中也有一个一模一样的<code>messageConverters</code>，并且有setter和getter方法，并且惊奇的发现，在该适配器的构造方法中对<code>messageConverters</code>进行了初始化，并塞进去了4/5个转换器，这就完了吗？当然不是，上面可是看到了10个converter，这里最多才有5个，我们找到它的setter方法，然后继续冒泡，就找到了<code>WebMvcConfigurationSupport#requestMappingHandlerAdapter</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> RequestMappingHandlerAdapter <span class="title">requestMappingHandlerAdapter</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  @Qualifier(<span class="string">"mvcContentNegotiationManager"</span>)</span> ContentNegotiationManager contentNegotiationManager,</span></span><br><span class="line"><span class="function">  @<span class="title">Qualifier</span><span class="params">(<span class="string">"mvcConversionService"</span>)</span> FormattingConversionService conversionService,</span></span><br><span class="line"><span class="function">  @<span class="title">Qualifier</span><span class="params">(<span class="string">"mvcValidator"</span>)</span> Validator validator) </span>&#123;</span><br><span class="line">  </span><br><span class="line">  RequestMappingHandlerAdapter adapter = createRequestMappingHandlerAdapter();</span><br><span class="line">  <span class="comment">// ☆核心代码</span></span><br><span class="line">  adapter.setMessageConverters(getMessageConverters());</span><br><span class="line">  <span class="comment">// 忽略其他代码</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取转换器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> List&lt;HttpMessageConverter&lt;?&gt;&gt; getMessageConverters() &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.messageConverters == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.messageConverters = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="comment">// 调用WebMvcConfigurer代理类获取自定义的converter，其实就是获取上面HttpConverterConfig#configureMessageConverters里面定义的</span></span><br><span class="line">    <span class="comment">// 因为我们把自定义的HttpConverterConfig从spring容器中拿掉了，所以这个方法跑了个寂寞</span></span><br><span class="line">    configureMessageConverters(<span class="keyword">this</span>.messageConverters);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.messageConverters.isEmpty()) &#123;</span><br><span class="line">      <span class="comment">// 上面的方法跑了个寂寞，那这里就给寂寞加点芥末，进去看看↓</span></span><br><span class="line">      addDefaultHttpMessageConverters(<span class="keyword">this</span>.messageConverters);</span><br><span class="line">    &#125;</span><br><span class="line">    extendMessageConverters(<span class="keyword">this</span>.messageConverters);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.messageConverters;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加默认的转换器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">addDefaultHttpMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; messageConverters)</span> </span>&#123;</span><br><span class="line">  messageConverters.add(<span class="keyword">new</span> ByteArrayHttpMessageConverter());</span><br><span class="line">  messageConverters.add(<span class="keyword">new</span> StringHttpMessageConverter());</span><br><span class="line">  messageConverters.add(<span class="keyword">new</span> ResourceHttpMessageConverter());</span><br><span class="line">  messageConverters.add(<span class="keyword">new</span> ResourceRegionHttpMessageConverter());</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> SourceHttpMessageConverter&lt;&gt;());</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">    <span class="comment">// Ignore when no TransformerFactory implementation is available...</span></span><br><span class="line">  &#125;</span><br><span class="line">  messageConverters.add(<span class="keyword">new</span> AllEncompassingFormHttpMessageConverter());</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (romePresent) &#123;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> AtomFeedHttpMessageConverter());</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> RssChannelHttpMessageConverter());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (jackson2XmlPresent) &#123;</span><br><span class="line">    Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.xml();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.applicationContext != <span class="keyword">null</span>) &#123;</span><br><span class="line">      builder.applicationContext(<span class="keyword">this</span>.applicationContext);</span><br><span class="line">    &#125;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> MappingJackson2XmlHttpMessageConverter(builder.build()));</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (jaxb2Present) &#123;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> Jaxb2RootElementHttpMessageConverter());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (jackson2Present) &#123;</span><br><span class="line">    Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.json();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.applicationContext != <span class="keyword">null</span>) &#123;</span><br><span class="line">      builder.applicationContext(<span class="keyword">this</span>.applicationContext);</span><br><span class="line">    &#125;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> MappingJackson2HttpMessageConverter(builder.build()));</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (gsonPresent) &#123;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> GsonHttpMessageConverter());</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (jsonbPresent) &#123;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> JsonbHttpMessageConverter());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (jackson2SmilePresent) &#123;</span><br><span class="line">    Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.smile();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.applicationContext != <span class="keyword">null</span>) &#123;</span><br><span class="line">      builder.applicationContext(<span class="keyword">this</span>.applicationContext);</span><br><span class="line">    &#125;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> MappingJackson2SmileHttpMessageConverter(builder.build()));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (jackson2CborPresent) &#123;</span><br><span class="line">    Jackson2ObjectMapperBuilder builder = Jackson2ObjectMapperBuilder.cbor();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.applicationContext != <span class="keyword">null</span>) &#123;</span><br><span class="line">      builder.applicationContext(<span class="keyword">this</span>.applicationContext);</span><br><span class="line">    &#125;</span><br><span class="line">    messageConverters.add(<span class="keyword">new</span> MappingJackson2CborHttpMessageConverter(builder.build()));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>现在就都清楚了，之所以会出现<code>ClassCastException</code>，是因为传入的参数类型和使用的<code>HttpMessageConverter</code>类型不匹配，找到对应的converter即可，所以尽量在一个项目中，接口的返回值类型最好统一进行封装，防止出现此类情况。</p>
+<blockquote>
+<p>扩展</p>
+</blockquote>
+<p>再细细一品，<code>AbstractMessageConverterMethodProcessor#writeWithMessageConverters</code>的代码是不是真的有bug，能不能改造一下呢？比如在调用converter的canWrite方法之前先调用advice的<code>beforeBodyWrite</code>方法，然后重新使用下方语句获取类型，接着继续执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valueType = getReturnValueType(body, returnType);</span><br><span class="line">targetType = GenericTypeResolver.resolveType(getGenericType(returnType), returnType.getContainingClass());</span><br></pre></td></tr></table></figure>
+<p>这只是一个简单的想法，具体尚未深究。</p>
+<hr>
+<p>凑够2021个字，凑够2021个字，凑够2021个字，凑够2021</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://chuanyichuan.github.io/2021/02/26/SpringBoot接口返回值出现ClassCastException/" title="SpringBoot接口返回值出现ClassCastException" target="_blank" rel="external">http://chuanyichuan.github.io/2021/02/26/SpringBoot接口返回值出现ClassCastException/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/luxiaowan" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="../../../../images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/luxiaowan" target="_blank"><span class="text-dark">串一串</span><small class="ml-1x">浪人</small></a></h3>
+        <div>断舍离</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="../../../03/17/Percona-XtraBackup使用详解与原理/" title="Percona-xtrabackup备份MySQL使用详解与原理"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="../../18/Redis Cluster在Master节点fail后未自动切换主备/" title="Redis Cluster在Master节点fail后未自动切换主备"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 cc
+        
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="../../../../js/plugin.min.js"></script>
+<script src="../../../../js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '../../../../content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="../../../../js/insight.js"></script>
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

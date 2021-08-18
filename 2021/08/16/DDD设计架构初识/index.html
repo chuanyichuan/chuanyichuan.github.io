@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000">
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top">
+  
+  
+  <title>DDD设计架构初识 | 串一串</title>
+  <meta name="description" content="领域 领域：表示正在处理的现实世界中复杂的业务逻辑和规则构成的问题域 领域模型：对现实世界真实业务的抽象描述，与任何技术都无关 子域：整个业务领域的一部分，与微服务划分的粒度有关，包括核心域、支撑子域、通用子域  核心域：核心业务，是一个有明确限界上下文的定义明确的业务领域模型，项目的核心业务体现，需重点打磨 支撑子域：支撑核心域，依据核心域内容进行“定制化”开发 通用子域：辅助核心域，拿来即用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD设计架构初识">
+<meta property="og:url" content="http://chuanyichuan.github.io/2021/08/16/DDD设计架构初识/index.html">
+<meta property="og:site_name" content="串一串">
+<meta property="og:description" content="领域 领域：表示正在处理的现实世界中复杂的业务逻辑和规则构成的问题域 领域模型：对现实世界真实业务的抽象描述，与任何技术都无关 子域：整个业务领域的一部分，与微服务划分的粒度有关，包括核心域、支撑子域、通用子域  核心域：核心业务，是一个有明确限界上下文的定义明确的业务领域模型，项目的核心业务体现，需重点打磨 支撑子域：支撑核心域，依据核心域内容进行“定制化”开发 通用子域：辅助核心域，拿来即用">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/%E9%A2%86%E5%9F%9F%E6%9E%B6%E6%9E%84%E5%B1%82%E6%AC%A1%E8%AE%BE%E8%AE%A1.jpg">
+<meta property="og:updated_time" content="2021-08-18T08:34:49.299Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DDD设计架构初识">
+<meta name="twitter:description" content="领域 领域：表示正在处理的现实世界中复杂的业务逻辑和规则构成的问题域 领域模型：对现实世界真实业务的抽象描述，与任何技术都无关 子域：整个业务领域的一部分，与微服务划分的粒度有关，包括核心域、支撑子域、通用子域  核心域：核心业务，是一个有明确限界上下文的定义明确的业务领域模型，项目的核心业务体现，需重点打磨 支撑子域：支撑核心域，依据核心域内容进行“定制化”开发 通用子域：辅助核心域，拿来即用">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/%E9%A2%86%E5%9F%9F%E6%9E%B6%E6%9E%84%E5%B1%82%E6%AC%A1%E8%AE%BE%E8%AE%A1.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://chuanyichuan.github.io/2021/08/16/DDD设计架构初识/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="串一串" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/luxiaowan" target="_blank">
+          <img class="img-circle img-rotate" src="../../../../images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">串一串</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">浪人</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Suzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="../../../../.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="../../../../archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="../../../../repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="../../../../books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="../../../../links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="../../../../about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>断舍离!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/DDD/">DDD</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringCloud/">SpringCloud</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Gateway/">Gateway</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Seata/">Seata</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式事务/">分布式事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式锁/">分布式锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/网关/">网关</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/锁/">锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.17px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/Gateway/" style="font-size: 13px;">Gateway</a> <a href="../../../../tags/JVM/" style="font-size: 13.5px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.17px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.33px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.17px;">MySQL</a> <a href="../../../../tags/Redis/" style="font-size: 13px;">Redis</a> <a href="../../../../tags/Seata/" style="font-size: 13px;">Seata</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13.17px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.17px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.67px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/事务/" style="font-size: 13px;">事务</a> <a href="../../../../tags/分布式事务/" style="font-size: 13px;">分布式事务</a> <a href="../../../../tags/分布式锁/" style="font-size: 13px;">分布式锁</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.17px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/网关/" style="font-size: 13px;">网关</a> <a href="../../../../tags/锁/" style="font-size: 13px;">锁</a> <a href="../../../../tags/阿里/" style="font-size: 13.33px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.83px;">面试</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/08/">八月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/07/">七月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../18/服务器k8s部署脚本/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="../../18/服务器k8s部署脚本/" class="title">服务器K8s部署脚本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-18T08:31:00.000Z" itemprop="datePublished">2021-08-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/DDD/">DDD</a>
+              </p>
+              <p class="item-title">
+                <a href="" class="title">DDD设计架构初识</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-16T05:14:00.000Z" itemprop="datePublished">2021-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/22/Raft协议探析/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/分布式/">分布式</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/22/Raft协议探析/" class="title">Raft协议探析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-22T15:23:00.000Z" itemprop="datePublished">2021-07-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/04/mysqldump备份与恢复/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/04/mysqldump备份与恢复/" class="title">Mysqldump备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-04T12:00:00.000Z" itemprop="datePublished">2021-07-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="title">LibreSSL SSL_connect SSL_ERROR_SYSCALL in Connection to github.com 443</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-16T07:00:00.000Z" itemprop="datePublished">2021-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-DDD设计架构初识" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      DDD设计架构初识
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="" class="article-date">
+	  <time datetime="2021-08-16T05:14:00.000Z" itemprop="datePublished">2021-08-16</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="../../../../categories/DDD/">DDD</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.4k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 11(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h4 id="领域"><a class="markdownIt-Anchor" href="#领域"></a> 领域</h4>
+<p>领域：表示正在处理的现实世界中复杂的业务逻辑和规则构成的问题域</p>
+<p>领域模型：对现实世界真实业务的抽象描述，与任何技术都无关</p>
+<p>子域：整个业务领域的一部分，与微服务划分的粒度有关，包括核心域、支撑子域、通用子域</p>
+<ul>
+<li>核心域：核心业务，是一个有明确限界上下文的定义明确的业务领域模型，项目的核心业务体现，需重点打磨</li>
+<li>支撑子域：支撑核心域，依据核心域内容进行“定制化”开发</li>
+<li>通用子域：辅助核心域，拿来即用主义，不需要“定制化”</li>
+</ul>
+<hr>
+<h4 id="基于数据库建模database-modeling"><a class="markdownIt-Anchor" href="#基于数据库建模database-modeling"></a> 基于数据库建模（Database Modeling）</h4>
+<ul>
+<li>通过数据抽象系统关系</li>
+<li>贫血模型模式</li>
+<li>通过数据库字段映射仅属性getter和setter，无具体行为</li>
+<li>相应行为通过Service实现</li>
+<li>日积月累容易出现胖服务层和贫血</li>
+</ul>
+<h4 id="基于对象建模object-modeling"><a class="markdownIt-Anchor" href="#基于对象建模object-modeling"></a> 基于对象建模（Object Modeling）</h4>
+<ul>
+<li>通过面向对象方式抽象系统关系</li>
+<li>最佳的领域建模方式（不考虑持久化的情况）</li>
+<li>充血模型模式</li>
+<li>不仅包含属性状态，还包括具体行为</li>
+<li>Service层逻辑变薄弱，模型丰富了行为</li>
+</ul>
+<hr>
+<h4 id="领域模型"><a class="markdownIt-Anchor" href="#领域模型"></a> 领域模型：</h4>
+<ul>
+<li>对具有某个边界的领域的一个抽象，反映了领域内业务需求的本质</li>
+<li>具有边界性，只反映我们在领域内所关注的部分</li>
+<li>只反映业务，和任何技术实现无关</li>
+<li>不仅能反映领域内的一些实体概念，还能反映领域中的一些过程概念</li>
+<li>确保整个软件的业务逻辑都在一个模型中，提升了软件的可维护性、业务可理解性以及可重用性</li>
+<li>帮助开发人员平滑的将领域知识转化为软件构造</li>
+<li>贯穿软件分析、设计、整个开发过程，领域专家、设计人员、开发人员通过领域模型进行交流，可以有效的防止需求走样</li>
+<li>领域模型必须由领域专家、设计、开发人员共同建立，一起不断的深入和细化模型</li>
+<li>用图、代码或文字描述的形式表达领域模型，使其可见化</li>
+<li>能够快速响应需求变化的领域模型必须设计的足够精良且符合业务需求</li>
+</ul>
+<hr>
+<h4 id="实体entity"><a class="markdownIt-Anchor" href="#实体entity"></a> 实体（Entity）</h4>
+<ul>
+<li>一个由他的标识定义的对象称为实体</li>
+<li>通常具有唯一id</li>
+<li>能够被持久化</li>
+<li>具有业务逻辑</li>
+<li>对应现实世界的业务对象</li>
+<li>一个持续抽象的生命，可以变化不同的形态和情形，但总有相同的标识</li>
+<li>要防止设计成贫血模型</li>
+</ul>
+<h4 id="值对象value-object"><a class="markdownIt-Anchor" href="#值对象value-object"></a> 值对象（Value Object）</h4>
+<ul>
+<li>一个描述领域方面但没有概念标识符的的对象</li>
+<li>用来表示临时的事物，可当作是实体的属性</li>
+<li>没有特性标识，但能够表达领域中某类含义</li>
+<li>一般不具有唯一id，由对象的属性描述，可以用来传递参数或对实体进行补充描述</li>
+<li>作为实体属性的描述时，值对象也会被存储</li>
+<li>对象不可变，所有属性均为只读，可以被复制或共享</li>
+<li>本质上，值对象只是代表一个值</li>
+</ul>
+<blockquote>
+<p>区别：</p>
+<ol>
+<li>唯一标识：实体有；值对象没有</li>
+<li>对象判断：实体只看唯一标识是否相等；值对象看全部属性是否相等</li>
+</ol>
+</blockquote>
+<h4 id="聚合及聚合根aggregate-aggregate-root"><a class="markdownIt-Anchor" href="#聚合及聚合根aggregate-aggregate-root"></a> 聚合及聚合根（Aggregate &amp; Aggregate Root）</h4>
+<ul>
+<li>
+<p>定义领域对象的所有权和边界的领域模型</p>
+</li>
+<li>
+<p>聚合帮助简化模型对象间的关系</p>
+</li>
+<li>
+<p>通过定义对象之间清晰的所属关系和边界来实现领域模型的内聚，且避免了错综复杂难以维护的对象关系网的形成</p>
+</li>
+<li>
+<p>聚合是对领域模型的深化，能阐释领域模型内部对象之间的深层关联，聚合关系会直接映射到程序结构上</p>
+</li>
+<li>
+<p>一个聚合是一组相关的被视为整体的对象</p>
+</li>
+<li>
+<p>每个聚合都有一个根对象（聚合根实体），根实体对象可以聚合所有对象的引用，但从外部访问只能通过这个根对象</p>
+</li>
+<li>
+<p>仅根实体能使用仓储库直接查询，根实体被删除后，聚合内部的对象级联删除</p>
+</li>
+<li>
+<p>聚合有一个根和一个边界，根是聚合内的某个实体，边界定义了一个聚合内部有哪些实体或值对象</p>
+</li>
+<li>
+<p>聚合内部的对象之间可以相互引用，根为内部对象的唯一引用</p>
+</li>
+<li>
+<p>聚合根对外负责与外部对象打交道，对内负责维护自己的内部业务规则</p>
+</li>
+<li>
+<p>聚合内部对象可以拥有对其他聚合根的引用</p>
+</li>
+<li>
+<p>聚合内的所有对象都必须同聚合根一起被删除</p>
+</li>
+</ul>
+<h4 id="工厂factories"><a class="markdownIt-Anchor" href="#工厂factories"></a> 工厂（factories）</h4>
+<ul>
+<li>用来封装创建一个复杂对象，将创建对象的细节隐藏起来</li>
+<li>通过简单入参创建复杂的领域对象，最终传出一个根实体</li>
+</ul>
+<h4 id="仓储repositories"><a class="markdownIt-Anchor" href="#仓储repositories"></a> 仓储（repositories）</h4>
+<ul>
+<li>管理实体的集合</li>
+<li>仅存储聚合的对象（因为domain是以聚合的概念来划分边界，聚合作为一个整体，共存亡）</li>
+<li>仓储定义部分+仓储实现部分=仓储</li>
+<li>领域模型中定义仓储的接口</li>
+<li>基础设施层实现具体的仓库</li>
+<li>dao层方法粒度更细，更接近数据库；repository是一个独立的抽象，粒度略粗，接近领域</li>
+<li>领域对象只依赖于repository</li>
+<li>客户端调用领域对象，领域对象再调dao将数据持久化</li>
+</ul>
+<h4 id="服务service"><a class="markdownIt-Anchor" href="#服务service"></a> 服务（Service）</h4>
+<ul>
+<li>分派业务逻辑给领域对象进行处理，绝大部分的业务逻辑都由领域对象承载和实现</li>
+<li>Service与其他组件进行交互，包括：其他Service、领域对象、repository、dao</li>
+<li>代码必须非常简洁，必须实现对领域底层组件的调用</li>
+<li>服务对象名称应包含一个动词</li>
+<li>Service接口的传入/传出参数都应该是DTO</li>
+<li>包含领域对象和DTO的转换以及事务</li>
+<li>服务执行的操作涉及一个领域概念，这个领域概念通常不属于一个实体或者值对象</li>
+<li>被执行的操作涉及到领域中其他的对象</li>
+<li>操作是无状态的</li>
+</ul>
+<h4 id="domain事件"><a class="markdownIt-Anchor" href="#domain事件"></a> domain事件</h4>
+<ul>
+<li>系统事件、应用事件、领域事件</li>
+<li>领域事件触发点在领域模型中</li>
+<li>作用是将领域对象从repository和Service的依赖中解脱出来，避免让领域对象对这些设施产生直接依赖</li>
+<li>作法就是当领域对象的业务方法需要依赖到这些对象时，就发出一个事件，这个事件会被相应的领域对象监听到，并做出处理</li>
+<li>实现领域模型对象状态的异步更新、外部系统接口的委托调用、通过事件派发机制实现系统集成</li>
+<li>领域事件本身具有自我描述性，不仅可以表达系统发生了什么事情，还能够描述发生事件的动机</li>
+</ul>
+<h4 id="dtodata-transfer-object"><a class="markdownIt-Anchor" href="#dtodata-transfer-object"></a> DTO（Data Transfer Object）</h4>
+<ul>
+<li>以粗粒度的数据结构减少网络通信并简化调用接口</li>
+</ul>
+<hr>
+<h4 id="架构层次"><a class="markdownIt-Anchor" href="#架构层次"></a> 架构层次</h4>
+<ul>
+<li>层
+<ul>
+<li>构成应用或服务的水平堆叠的一组逻辑上的组件</li>
+<li>帮助区分完成不同任务的组件</li>
+<li>提供一个最大化复用和可维护性的设计</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/%E9%A2%86%E5%9F%9F%E6%9E%B6%E6%9E%84%E5%B1%82%E6%AC%A1%E8%AE%BE%E8%AE%A1.jpg" alt="在这里插入图片描述"></p>
+<ul>
+<li>User Interface
+<ul>
+<li>包含与其他系统/客户进行交互的接口与通信设施</li>
+<li>该层包含web、service、rmi、rest等一种或多种通信接口</li>
+<li>该层由facade、dto、assembler三类组件构成</li>
+<li>dto：以粗粒度的数据结构减少网络通信并简化接口调用</li>
+<li>facade：为远程客户端提供粗粒度的调用接口，本身不处理任何的业务逻辑，主要工作就是将一个用户请求委派给一个或多个service进行处理，同时借助assembler将service传入或传出的领域对象转为dto进行传输</li>
+<li>assembler：将领域对象与dto进行相互转换</li>
+</ul>
+</li>
+<li>Application
+<ul>
+<li>主要组件就是service</li>
+<li>service的组织粒度和接口设计与传统的transaction script风格的service是一致的，但又有区别</li>
+<li>transaction script的核心是<strong>过程</strong>，通过过程的调用来组织业务逻辑，业务逻辑在服务层进行处理</li>
+<li>transaction script简单容易理解，面向过程设计，基础设施不会有技术的改变，业务逻辑很少变动</li>
+<li>transaction script不适合复杂的业务逻辑，事务之间的冗余代码会递增，应用架构容易出现“胖服务层”和“贫血的领域模型”，service层聚积越来越多的业务逻辑，导致可维护性和扩展性变差</li>
+<li>transaction script的业务逻辑主要在service中实现</li>
+<li>领域模型属于面向对象设计，具备自己的属性行为和状态，领域对象之间可以通过聚合解决实际的业务应用</li>
+<li>领域模型可复用、可维护、可扩展，可以采用合适的设计模型进行详细设计</li>
+<li>领域模型需要设计人员有良好的抽象能力，相对复杂</li>
+<li>领域模型的service层只负责协调并委派业务逻辑给相应的领域对象进行处理</li>
+</ul>
+</li>
+<li>Domain
+<ul>
+<li>整个系统的核心层</li>
+<li>该层维护一个使用面向对象技术实现的领域模型</li>
+<li>该层实现大部分的业务逻辑，乃至全部的业务逻辑</li>
+<li>该层包含entity、value object、domain event 和 repository等领域组件</li>
+</ul>
+</li>
+<li>Infrastructure
+<ul>
+<li>为User Interface、Application、Domain三层提供支撑</li>
+<li>提供所有的与平台、框架相关的实现</li>
+<li>提供对象持久化的具体实现</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="领域模型的设计步骤"><a class="markdownIt-Anchor" href="#领域模型的设计步骤"></a> 领域模型的设计步骤</h4>
+<ol>
+<li>根据需求建立一个初步的领域模型，识别出一些明显的领域概念以及它们的关联性，关联可以暂时没有方向但是必须有关系（1:1, 1:n, n:m），可以使用文字或图精确的描述出每个领域概念的含义和包含的主要信息</li>
+<li>分析主要的软件应用程序，识别出主要的应用层的类，分清应用层和领域层的职责</li>
+<li>进一步分析领域模型，识别出实体、值对象、领域服务</li>
+<li>分析关联性，通过对业务的深入分析以及各种软件设计原则及性能方面的权衡，明确关联的方向（新增或删除）</li>
+<li>☆找出聚合边界和聚合根，需要借助平时的一些分析经验的积累才能找出正确的聚合根</li>
+<li>为聚合根配备仓储，一般情况下一个聚合分配一个仓储，设计好仓储的接口</li>
+<li>分析场景，确定设计的领域模型能够有效的解决业务需求</li>
+<li>确定领域实体和值对象的创建方式，比如工厂或构造函数</li>
+<li>尝试重构模型，寻找模型中不确定的地方，比如领域对象是从仓储获取还是通过聚合得到，聚合设计是否正确，性能如何等等</li>
+</ol>
+<hr>
+<h4 id="ddd特征"><a class="markdownIt-Anchor" href="#ddd特征"></a> DDD特征</h4>
+<ul>
+<li>一个以pojo为基础的架构</li>
+<li>支持使用DDD概念的业务领域模型的设计和实现</li>
+<li>支持依赖注入和面向切面编程的开箱即用</li>
+<li>整合单元测试框架</li>
+<li>良好的集成其他javaee框架</li>
+</ul>
+<hr>
+<h4 id="领域模型分类"><a class="markdownIt-Anchor" href="#领域模型分类"></a> 领域模型分类</h4>
+<ul>
+<li>
+<p>失血模型</p>
+<ul>
+<li>domain object中的属性只有getter/setter方法</li>
+<li>所有的业务逻辑均由business object完成（又称transaction script）</li>
+</ul>
+</li>
+<li>
+<p>贫血模型</p>
+<ul>
+<li>Service(Transaction script) —&gt; DAO —&gt; domain object</li>
+<li>domain object包含了不依赖于持久化的领域逻辑</li>
+<li>依赖于持久化的领域逻辑被分离到service层</li>
+<li>domain logic 和 business logic</li>
+<li>domain logic只和这一个domain object的实例状态有关</li>
+<li>business logic可以和多个domain object的实例状态有关</li>
+<li>将domain logic放到domain object之后，domain object仍独立于持久层之外，且仍是一个完备的、自包含的、不依赖于外部环境的领域对象</li>
+<li>在service中执行与持久层相关的业务逻辑</li>
+<li>各层单向依赖，结构清晰，易于实现和维护</li>
+<li>设计简单易行，底层模式非常稳定</li>
+</ul>
+</li>
+<li>
+<p>充血模型</p>
+<ul>
+<li>Service(Transaction script) —&gt; domain object &lt;—&gt; DAO</li>
+<li>与贫血模型的区别在于业务逻辑的划分</li>
+<li>大部分业务逻辑都放在domain object中，包括持久化逻辑</li>
+<li>domain object中包含了domain logic 和 business logic</li>
+<li>Service层仅封装事务和少量逻辑，不和DAO层打交道</li>
+</ul>
+<blockquote>
+<p>缺点</p>
+</blockquote>
+<ul>
+<li>DAO和domain相互依赖，会导致很多潜在问题</li>
+<li>Service层逻辑和domain层逻辑对于水平参差的设计和开发人员来说容易含混不清</li>
+<li>Service层需要对domain object的逻辑提供相应的事务，结果会导致Service层把所有的domain logic都重新定义一遍，最终把domain层实现的OO在Service层又变成了过程式</li>
+</ul>
+</li>
+<li>
+<p>胀血模型</p>
+<ul>
+<li>domain object &lt;—&gt; DAO</li>
+<li>去掉service层</li>
+<li>在domain logic上封装事务</li>
+</ul>
+<blockquote>
+<p>缺点</p>
+</blockquote>
+<ul>
+<li>过多的service逻辑耦合到domain object中，会引起domain object模型的不稳定</li>
+<li>domain object暴露过多的信息给web层，可能会引起不必要的影响</li>
+</ul>
+<blockquote>
+<p>比较</p>
+</blockquote>
+<ul>
+<li>失血模型和胀血模型不推荐</li>
+<li>推荐使用贫血模型</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://chuanyichuan.github.io/2021/08/16/DDD设计架构初识/" title="DDD设计架构初识" target="_blank" rel="external">http://chuanyichuan.github.io/2021/08/16/DDD设计架构初识/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/luxiaowan" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="../../../../images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/luxiaowan" target="_blank"><span class="text-dark">串一串</span><small class="ml-1x">浪人</small></a></h3>
+        <div>断舍离</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="../../18/服务器k8s部署脚本/" title="服务器K8s部署脚本"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="../../../07/22/Raft协议探析/" title="Raft协议探析"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 cc
+        
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="../../../../js/plugin.min.js"></script>
+<script src="../../../../js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '../../../../content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="../../../../js/insight.js"></script>
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

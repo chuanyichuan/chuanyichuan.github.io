@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000">
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top">
+  
+  
+  <title>Percona-xtrabackup备份MySQL使用详解与原理 | 串一串</title>
+  <meta name="description" content="一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is an open-source hot backup utility for MySQL - based servers that doesn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Percona-xtrabackup备份MySQL使用详解与原理">
+<meta property="og:url" content="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/index.html">
+<meta property="og:site_name" content="串一串">
+<meta property="og:description" content="一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is an open-source hot backup utility for MySQL - based servers that doesn">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://chuanyichuan.github.io/images/image-20210420221252727.png">
+<meta property="og:updated_time" content="2021-04-20T14:13:50.003Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Percona-xtrabackup备份MySQL使用详解与原理">
+<meta name="twitter:description" content="一、Percona-xtrabackup介绍 以下文档来自官网介绍（https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。  Percona xtrabackup is an open-source hot backup utility for MySQL - based servers that doesn">
+<meta name="twitter:image" content="http://chuanyichuan.github.io/images/image-20210420221252727.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="串一串" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="../../../../css/style.css">
+  
+  
+  
+  
+</head>
+
+
+<body class="main-center theme-purple" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/luxiaowan" target="_blank">
+          <img class="img-circle img-rotate" src="../../../../images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">串一串</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">浪人</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Suzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="../../../../.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="../../../../archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="../../../../repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="../../../../books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="../../../../links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="../../../../about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>断舍离!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="../../../../categories/BUG/">BUG</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/DDD/">DDD</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Docker/">Docker</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Elasticsearch/">Elasticsearch</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Git/">Git</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Java/">Java</a><span class="category-list-count">44</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Jenkins/">Jenkins</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kafka/">Kafka</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Kubernetes/">Kubernetes</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Maven/">Maven</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MongoDB/">MongoDB</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MyBatis/">MyBatis</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/MySQL/">MySQL</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Nacos/">Nacos</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/NoSQL/">NoSQL</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Redis/">Redis</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/Spring/">Spring</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringBoot/">SpringBoot</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/SpringCloud/">SpringCloud</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/分布式/">分布式</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/杂谈/">杂谈</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="../../../../categories/架构设计/">架构设计</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Bug/">Bug</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Docker/">Docker</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Eureka/">Eureka</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/GC/">GC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Gateway/">Gateway</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/JVM/">JVM</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java/">Java</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Java与MongoDB/">Java与MongoDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Linux/">Linux</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Maven/">Maven</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MongoDB错误记录/">MongoDB错误记录</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/MySQL/">MySQL</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Seata/">Seata</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/Sentinel/">Sentinel</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot/">SpringBoot</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringBoot-Admin/">SpringBoot Admin</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/SpringCloud/">SpringCloud</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/k8s/">k8s</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/事务/">事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式事务/">分布式事务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/分布式锁/">分布式锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基本指令/">基本指令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/基础应用/">基础应用</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/服务治理/">服务治理</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/监控/">监控</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/索引/">索引</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/网关/">网关</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/锁/">锁</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/阿里/">阿里</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="../../../../tags/面试/">面试</a><span class="tag-list-count">8</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="../../../../tags/Bug/" style="font-size: 13px;">Bug</a> <a href="../../../../tags/Docker/" style="font-size: 13px;">Docker</a> <a href="../../../../tags/Eureka/" style="font-size: 13.17px;">Eureka</a> <a href="../../../../tags/GC/" style="font-size: 13px;">GC</a> <a href="../../../../tags/Gateway/" style="font-size: 13px;">Gateway</a> <a href="../../../../tags/JVM/" style="font-size: 13.5px;">JVM</a> <a href="../../../../tags/Java/" style="font-size: 13.17px;">Java</a> <a href="../../../../tags/Java与MongoDB/" style="font-size: 13px;">Java与MongoDB</a> <a href="../../../../tags/Linux/" style="font-size: 13px;">Linux</a> <a href="../../../../tags/Maven/" style="font-size: 13.33px;">Maven</a> <a href="../../../../tags/MongoDB错误记录/" style="font-size: 13px;">MongoDB错误记录</a> <a href="../../../../tags/MySQL/" style="font-size: 13.17px;">MySQL</a> <a href="../../../../tags/Redis/" style="font-size: 13px;">Redis</a> <a href="../../../../tags/Seata/" style="font-size: 13px;">Seata</a> <a href="../../../../tags/Sentinel/" style="font-size: 13px;">Sentinel</a> <a href="../../../../tags/SpringBoot/" style="font-size: 13.17px;">SpringBoot</a> <a href="../../../../tags/SpringBoot-Admin/" style="font-size: 13.17px;">SpringBoot Admin</a> <a href="../../../../tags/SpringCloud/" style="font-size: 13.67px;">SpringCloud</a> <a href="../../../../tags/k8s/" style="font-size: 13px;">k8s</a> <a href="../../../../tags/事务/" style="font-size: 13px;">事务</a> <a href="../../../../tags/分布式事务/" style="font-size: 13px;">分布式事务</a> <a href="../../../../tags/分布式锁/" style="font-size: 13px;">分布式锁</a> <a href="../../../../tags/基本指令/" style="font-size: 13px;">基本指令</a> <a href="../../../../tags/基础应用/" style="font-size: 13.17px;">基础应用</a> <a href="../../../../tags/服务治理/" style="font-size: 13px;">服务治理</a> <a href="../../../../tags/监控/" style="font-size: 13px;">监控</a> <a href="../../../../tags/索引/" style="font-size: 14px;">索引</a> <a href="../../../../tags/网关/" style="font-size: 13px;">网关</a> <a href="../../../../tags/锁/" style="font-size: 13px;">锁</a> <a href="../../../../tags/阿里/" style="font-size: 13.33px;">阿里</a> <a href="../../../../tags/面试/" style="font-size: 13.83px;">面试</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/08/">八月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/07/">七月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/05/">五月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/04/">四月 2021</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/03/">三月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/02/">二月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2021/01/">一月 2021</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/11/">十一月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/10/">十月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/07/">七月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/06/">六月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/05/">五月 2020</a><span class="archive-list-count">31</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/04/">四月 2020</a><span class="archive-list-count">52</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/03/">三月 2020</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/02/">二月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2020/01/">一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/12/">十二月 2019</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/11/">十一月 2019</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/10/">十月 2019</a><span class="archive-list-count">16</span></li><li class="archive-list-item"><a class="archive-list-link" href="../../../../archives/2019/01/">一月 2019</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../08/18/服务器k8s部署脚本/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/Kubernetes/">Kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../08/18/服务器k8s部署脚本/" class="title">服务器K8s部署脚本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-18T08:31:00.000Z" itemprop="datePublished">2021-08-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../08/16/DDD设计架构初识/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/DDD/">DDD</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../08/16/DDD设计架构初识/" class="title">DDD设计架构初识</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-16T05:14:00.000Z" itemprop="datePublished">2021-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/22/Raft协议探析/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/分布式/">分布式</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/22/Raft协议探析/" class="title">Raft协议探析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-22T15:23:00.000Z" itemprop="datePublished">2021-07-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../07/04/mysqldump备份与恢复/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/MySQL/">MySQL</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../07/04/mysqldump备份与恢复/" class="title">Mysqldump备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-04T12:00:00.000Z" itemprop="datePublished">2021-07-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-thumb">
+              <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+
+            </div>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="../../../../categories/BUG/">BUG</a>
+              </p>
+              <p class="item-title">
+                <a href="../../../06/16/LibreSSL-SSL_connect-SSL_ERROR_SYSCALL-in-connection-to-github.com443/" class="title">LibreSSL SSL_connect SSL_ERROR_SYSCALL in Connection to github.com 443</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-16T07:00:00.000Z" itemprop="datePublished">2021-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Percona-XtraBackup使用详解与原理" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Percona-xtrabackup备份MySQL使用详解与原理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="" class="article-date">
+	  <time datetime="2021-03-17T04:22:00.000Z" itemprop="datePublished">2021-03-17</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="../../../../categories/MySQL/">MySQL</a>
+  </span>
+
+        
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 5.6k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 23(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="一-percona-xtrabackup介绍"><a class="markdownIt-Anchor" href="#一-percona-xtrabackup介绍"></a> 一、Percona-xtrabackup介绍</h2>
+<p>以下文档来自官网介绍（<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/index.html%EF%BC%89%EF%BC%8C%E5%B9%B6%E7%BB%8F%E8%BF%87%E7%AE%80%E5%8D%95%E7%BF%BB%E8%AF%91%E3%80%82" target="_blank" rel="noopener">https://www.percona.com/doc/percona-xtrabackup/8.0/index.html），并经过简单翻译。</a></p>
+<blockquote>
+<p><code>Percona xtrabackup</code> is an open-source hot backup utility for MySQL - based servers that doesn’t lock your database during the backup.</p>
+<p>Whether it is a 24x7 highly loaded server or a low-transaction-volume environment, <code>Percona xtrabackup</code> is designed to make backups a seamless procedure without disrupting the performance of the server in a production environment.</p>
+<p><code>Percona xtrabacku</code> can back up data from InnoDB, XtraDB, MyISAM, and MyRocks tables on MySQL 8.0 servers as well as Percona Server for MySQL with XtraDB, Percona Server for MySQL 8.0, and Percona XtraDB Cluster 8.0.</p>
+</blockquote>
+<p><code>Percona xtrabackup</code>是基于<code>MySQL</code>服务器的开源热备份实用程序，在备份过程中不会锁定数据库。无论是24x7高负载服务器还是低事务量环境，<code>Percona xtrabackup</code>都旨在使备份成为无缝过程，而不会破坏生产环境中服务器的性能。</p>
+<p><code>Percona xtrabackup</code>可以备份<code>InnoDB</code>，XtraDB， <code>MyISAM</code>的数据，并且支持备份MyRocks表的数据，包括 <code>MySQL</code> 8.0 、Percona Server for <code>MySQL</code> with XtraDB、Percona Server for <code>MySQL</code> 8.0和Percona XtraDB Cluster 8.0。</p>
+<p>注意：在版本8.0.6中添加了对MyRocks存储引擎的支持，<code>Percona xtrabackup</code> 8.0还不支持TokuDB存储引擎。</p>
+<blockquote>
+<p><code>Percona xtrabackup</code> 8.0 does not support making backups of databases created in versions prior to 8.0 of MySQL, Percona Server for MySQL or Percona XtraDB Cluster. As the changes that MySQL 8.0 introduced in data dictionaries, redo log and undo log are incompatible with previous versions, it is currently impossible for <code>Percona xtrabackup</code> 8.0 to also support versions prior to 8.0.</p>
+</blockquote>
+<p><code>Percona xtrabackup</code> 8.0不支持对8.0之前的版本的MySQL 、Percona Server for MySQL或Percona XtraDB Cluster中创建的数据库进行备份。由于MySQL 8.0在数据字典，重做日志和撤消日志中引入的更改与以前的版本不兼容，因此<code>Percona xtrabackup</code> 8.0目前不可能支持8.0之前的版本。</p>
+<p>本次实验用的<code>MySQL</code>版本为5.7，按照官方文档介绍我们选择了<code>Percona xtrabackup 2.4</code>。官网文档介绍地址：<a href="https://www.percona.com/doc/percona-xtrabackup/2.4/index.html" target="_blank" rel="noopener">https://www.percona.com/doc/percona-xtrabackup/2.4/index.html</a></p>
+<h3 id="percona-xtrabackup24特性"><a class="markdownIt-Anchor" href="#percona-xtrabackup24特性"></a> <code>Percona xtrabackup</code>2.4特性</h3>
+<blockquote>
+<p><code>Percona xtrabackup</code> is the world’s only open-source, free MySQL hot backup software that performs non-blocking backups for InnoDB and XtraDB databases. With <code>Percona xtrabackup</code>, you can achieve the following benefits:</p>
+<ul>
+<li>Backups that complete quickly and reliably</li>
+<li>Uninterrupted transaction processing during backups</li>
+<li>Savings on disk space and network bandwidth</li>
+<li>Automatic backup verification</li>
+<li>Higher uptime due to faster restore time</li>
+</ul>
+</blockquote>
+<p><code>Percona xtrabackup</code>是世界上唯一的开源，免费<code>MySQL</code>热备份软件，该软件对<code>InnoDB</code>和XtraDB数据库执行非阻塞备份。使用<code>Percona xtrabackup</code>，您可以获得以下好处：</p>
+<ul>
+<li>快速可靠地完成备份</li>
+<li>备份期间不间断的事务处理</li>
+<li>节省磁盘空间和网络带宽</li>
+<li>自动备份验证</li>
+<li>更快的恢复时间可延长正常运行时间</li>
+</ul>
+<p><code>Percona xtrabackup</code>提供以下功能：</p>
+<ul>
+<li>创建<code>InnoDB</code>热备份而不会暂停数据库</li>
+<li>进行<code>MySQL</code>的增量备份</li>
+<li>将压缩的<code>MySQL</code>备份流式传输到另一台服务器</li>
+<li>在线在<code>MySQL</code>服务器之间移动表</li>
+<li>轻松创建新的<code>MySQL</code>复制副本</li>
+<li>备份<code>MySQL</code>而不增加服务器负载</li>
+</ul>
+<h3 id="percona-xtrabackup备份原理"><a class="markdownIt-Anchor" href="#percona-xtrabackup备份原理"></a> <code>Percona xtrabackup</code>备份原理</h3>
+<p><code>Percona xtrabackup</code>基于<code>InnoDB</code>的故障恢复（crash-recovery ）功能。它会复制您的<code>InnoDB</code>数据文件，从而导致数据内部不一致；但随后它将对文件执行故障恢复，以使它们再次成为一致的可用数据库。</p>
+<p>之所以可行，是因为<code>InnoDB</code>维护redo日志，也称为事务日志。这包含对<code>InnoDB</code>数据的每次更改的记录。当<code>InnoDB</code> 启动时，它将检查数据文件和事务日志，并执行这两个步骤。它将已提交的事务日志条目应用于数据文件，并对已修改数据但未提交的所有事务执行撤消（undo）操作。</p>
+<p><code>Percona xtrabackup</code>的工作方式是在启动时记住日志序列号（LSN），然后复制数据文件。这需要一些时间。因此，如果文件正在更改，则它们会在不同的时间点反映数据库的状态。同时，<code>Percona xtrabackup</code>运行一个后台进程监视事务日志文件，并从中复制更改的数据。<code>Percona xtrabackup</code>需要连续执行此操作，因为事务日志以循环方式编写，并且可以在一段时间后重新使用。自开始执行以来，<code>Percona xtrabackup</code>需要对数据文件的每次更改都具有事务日志记录。</p>
+<p><code>Percona xtrabackup</code>将在可用的情况下使用备份锁(Percona Server for <code>MySQL</code> 5.6+中提供了此功能)替代FLUSH TABLES WITH READ LOCK。<code>Percona xtrabackup</code>使用此功能自动复制非<code>InnoDB</code>数据，以避免阻止修改<code>InnoDB</code>表的DML查询。当服务器支持备份锁时， <strong><code>xtrabackup</code></strong> 将首先复制<code>InnoDB</code>数据，运行<code>LOCK TABLES FOR BACKUP</code>并复制<code>MyISAM</code>表和.frm文件。完成此操作后，将开始文件备份。它将备份.frm，.MRG，.MYD，.MYI，.TRG，.TRN， .ARM，.ARZ，.CSM，.CSV，.par和.opt的格式文件。</p>
+<p>之后 <strong><code>xtrabackup</code></strong> 将使用<code>LOCK BINLOG FOR BACKUP</code>阻止可能发生变化的二进制日志位置，或者通过<code>SHOW MASTER/SLAVE STATUS</code>报道Exec_Master_Log_Pos操作 或者Exec_Gtid_Set操作（即源的二进制日志坐标对应于复制副本当前SQL线程状态）。然后，**<code>xtrabackup</code>**将完成REDO日志文件的复制，并获取二进制日志坐标。完成此操作后， **<code>xtrabackup</code>**将解锁二进制日志和表。</p>
+<p>最后，二进制日志位置将被打印到STDERR， <strong><code>xtrabackup</code></strong> 如果一切正常将退出并返回0。</p>
+<h3 id="percona-xtrabackup增量备份原理"><a class="markdownIt-Anchor" href="#percona-xtrabackup增量备份原理"></a> <code>Percona xtrabackup</code>增量备份原理</h3>
+<p>无论 <strong><code>xtrabackup</code></strong> 和 <strong><code>innobackupex</code></strong> 工具支持增量备份，这意味着它们可以只复制自上次备份以来发生变化的数据。</p>
+<p>您可以在每个完整备份之间执行许多增量备份，因此您可以设置备份过程，例如每周一次完整备份和每天增量备份，或者每天完整备份和每小时增量备份。</p>
+<p>增量备份之所以有效，是因为每个<code>InnoDB</code>页面都包含一个日志序列号或LSN。该LSN是整个数据库系统的版本号。每个页面的LSN都显示了最近的更改时间。</p>
+<p>增量备份复制其LSN比先前的增量或完全备份的LSN更新的每个页面。有两种算法用于查找要复制的此类页面集。第一个可用于所有服务器类型和版本的服务器是通过读取所有数据页直接检查LSN页。Percona Server for MySQL中提供的第二个功能是启用服务器上已更改的页面跟踪功能，该功能将在更改页面时记录下来。然后将这些信息写在一个紧凑的单独的所谓的位图文件中。该 <strong><code>xtrabackup</code></strong> 二进制文件将使用该文件来读取增量备份所需的数据页，从而可能保存许多读取请求。如果 <strong><code>xtrabackup</code></strong> 二进制文件找到了位图文件，则默认情况下启用后一种算法。即使位图数据可用，也可以指定读取(<code>xtrabackup --incremental-force-scan</code>)所有页面。</p>
+<h3 id="percona-xtrabackup恢复原理"><a class="markdownIt-Anchor" href="#percona-xtrabackup恢复原理"></a> <code>Percona xtrabackup</code>恢复原理</h3>
+<p>要使用 <strong><code>xtrabackup</code></strong> 恢复备份，可以使用<code>xtrabackup --copy-back</code>或<code>xtrabackup --move-back</code>。</p>
+<p><code>xtrabackup</code> 将从my.cnf读取datadir， InnoDB_data_home_dir，InnoDB_data_file_path，InnoDB_log_group_home_dir变量并检查目录是否存在。</p>
+<p>首先将复制的<code>MyISAM</code>表，索引等（.frm， .MRG，.MYD，.MYI，.TRG，.TRN，.ARM，.ARZ，.CSM，.CSV，.par和 .opt），其次复制<code>InnoDB</code>的表和索引，最后是日志文件。在复制文件时，它将保留文件的属性，您可能需要在启动数据库之前将文件的所有权更改<code>MySQL</code>，因为它<br>
+们由创建备份的用户拥有。</p>
+<p>或者使用<code>xtrabackup --move-back</code>选项可用于还原备份，此选项类似于<code>xtrabackup --copy-back</code>， 唯一的区别在于，它不是复制文件，而是将文件移动到目标位置。由于此选项将删除备份文件，因此必须谨慎使用。在没有足够的可用磁盘空间来容纳数据文件及其备份副本的情况下，此选项很有用。</p>
+<h2 id="二-percona-xtrabackup的安装"><a class="markdownIt-Anchor" href="#二-percona-xtrabackup的安装"></a> 二、<code>Percona xtrabackup</code>的安装</h2>
+<p>由于我们的服务器大部分为无法连接公网，因此需要下载RPM包进行安装，该章节内容是基于el7安装。</p>
+<p>下载RPM包，并上传到目标服务器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.percona.com/downloads/Percona-xtrabackup-2.4/Percona-xtrabackup-2.4.21/binary/redhat/7/</span><br></pre></td></tr></table></figure>
+<p>安装时可能会遇到缺少包的问题，本次实验过程中缺少了libev 、perl:DBD::MySQL、perl::Digest::MD</p>
+<p>下载libev-4.15-7.el7.x86_64.rpm并执行如下命令完成安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install perl-DBD-MySQL</span><br><span class="line">yum install perl-Digest-MD5</span><br><span class="line">rpm -ivh libev-4.15-7.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+<p>继续安装<code>percona-xtrabackup</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install percona-xtrabackup-24-2.4.21-1.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+<p>安装完成，将增加如下可用命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">innobackupex</span><br><span class="line">xbcrypt</span><br><span class="line">xbstream</span><br><span class="line">xtrabackup</span><br></pre></td></tr></table></figure>
+<p>主要使用的是<code>innobackupex</code>和<code>xtrabackup</code>命令。</p>
+<blockquote>
+<p><code>xtrabackup</code> 是用来备份 <code>InnoDB</code> 表的，不能备份非 <code>InnoDB</code> 表，和 <code>MySQL</code>d server 没有交互；<code>innobackupex</code> 用来备份非 <code>InnoDB</code> 表，同时会调用 <code>xtrabackup</code> 命令来备份 <code>InnoDB</code> 表，还会和 <code>MySQL</code>d server 发送命令进行交互，如加读锁（FTWRL）、获取位点（<code>SHOW SLAVE STATUS</code>）等。简单来说，<code>innobackupex</code>在<code>xtrabackup</code>之上做了一层封装。</p>
+<p>xbcrypt 是加解密用的；xbstream 类似于tar，是 Percona 自己实现的一种支持并发写的流文件格式。两都在备份和解压时都会用到（如果备份用了加密和并发）。</p>
+</blockquote>
+<p>备份时<code>innobackupex</code>和<code>xtrabackup</code>交互和协调过程</p>
+<p><img src="/images/image-20210420221252727.png" alt="innobackupex和xtrabackup交互和协调过程"></p>
+<blockquote>
+<ol>
+<li>
+<p><code>innobackupex</code> 在启动后，会先 fork 一个进程，启动 <code>xtrabackup</code>进程，然后就等待<code>xtrabackup</code> 备份完 ibd 数据文件；</p>
+</li>
+<li>
+<p><code>xtrabackup</code> 在备份 <code>InnoDB</code> 相关数据时，是有2种线程的，1种是 redo 拷贝线程，负责拷贝 redo 文件，1种是 ibd 拷贝线程，负责拷贝 ibd 文件；redo 拷贝线程只有一个，在ibd 拷贝线程之前启动，在 ibd 线程结束后结束。<code>xtrabackup</code> 进程开始执行后，先启动redo 拷贝线程，从最新的 checkpoint 点开始顺序拷贝 redo 日志；然后再启动 ibd 数据拷贝线程，在 <code>xtrabackup</code> 拷贝 ibd 过程中，<code>innobackupex</code> 进程一直处于等待状态（等待文件被创建）。</p>
+</li>
+<li>
+<p><code>xtrabackup</code> 拷贝完成idb后，通知 <code>innobackupex</code>（通过创建文件），同时自己进入等待（redo 线程仍然继续拷贝）;</p>
+</li>
+<li>
+<p><code>innobackupex</code> 收到 <code>xtrabackup</code> 通知后，执行FLUSH TABLES WITH READ LOCK (FTWRL)，取得一致性位点，然后开始备份非 <code>InnoDB</code> 文件（包括 frm、MYD、MYI、CSV、opt、par等）。拷贝非 <code>InnoDB</code> 文件过程中，因为数据库处于全局只读状态，如果在业务的主库备份的话，要特别小心，非 <code>InnoDB</code> 表（主要是<code>MyISAM</code>）比较多的话整库只读时间就会比较长，这个影响一定要评估到。</p>
+</li>
+<li>
+<p>当 <code>innobackupex</code> 拷贝完所有非 <code>InnoDB</code> 表文件后，通知 <code>xtrabackup</code>（通过删文件） ，同时自己进入等待（等待另一个文件被创建）；</p>
+</li>
+<li>
+<p><code>xtrabackup</code> 收到 <code>innobackupex</code> 备份完非 <code>InnoDB</code> 通知后，就停止 redo 拷贝线程，然后通知 <code>innobackupex</code>redo log 拷贝完成（通过创建文件）；</p>
+</li>
+<li>
+<p><code>innobackupex</code> 收到 redo 备份完成通知后，就开始解锁，执行 UNLOCK TABLES；</p>
+</li>
+<li>
+<p>最后 <code>innobackupex</code> 和 <code>xtrabackup</code> 进程各自完成收尾工作，如资源的释放、写备份元数据信息等，<code>innobackupex</code> 等待 <code>xtrabackup</code> 子进程结束后退出。</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="三-备份和恢复"><a class="markdownIt-Anchor" href="#三-备份和恢复"></a> 三、备份和恢复</h2>
+<h3 id="全量备份"><a class="markdownIt-Anchor" href="#全量备份"></a> 全量备份</h3>
+<p>要创建备份，使用<code>xtrabackup --backup</code> 该选项运行 <strong><code>xtrabackup</code></strong> 。您还需要指定一个<code>xtrabackup --target-dir</code>选项，即备份的存储位置，如果<code>InnoDB</code>数据或日志文件未存储在同一目录中，则可能还需要指定这些文件的位置。如果目标目录不存在，则 <strong><code>xtrabackup</code></strong> 会创建它。如果该目录确实存在并且为空，则 <strong><code>xtrabackup</code></strong> 将成功。如果存在文件，<strong><code>xtrabackup</code></strong> 不会覆盖现有文件，它显示操作系统错误17并失败。</p>
+<h4 id="备份命令"><a class="markdownIt-Anchor" href="#备份命令"></a> 备份命令</h4>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file=/opt/MySQL/my.cnf --user=root --password=*** /backup/MySQL/data</span><br></pre></td></tr></table></figure>
+<p>该语句将拷贝数据文件（由my.cnf里的变量datadir指定）至备份目录下（/backup/MySQL/data），注意：如果不指定–defaults-file，默认值为/etc/my.cnf。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">160906 10:19:17 Finished backing up non-InnoDB tables and files</span><br><span class="line">160906 10:19:17 Executing FLUSH NO_WRITE_TO_BINLOG ENGINE LOGS...</span><br><span class="line">xtrabackup: The latest check point (for incremental): '62988944'</span><br><span class="line">xtrabackup: Stopping log copying thread.</span><br><span class="line">.160906 10:19:18 &gt;&gt; log scanned up to (137343534)</span><br><span class="line">160906 10:19:18 Executing UNLOCK TABLES</span><br><span class="line">160906 10:19:18 All tables unlocked</span><br><span class="line">160906 10:19:18 Backup created in directory '/backup/MySQL/data'</span><br><span class="line">160906 10:19:18 [00] Writing backup-my.cnf</span><br><span class="line">160906 10:19:18 [00]       ...done</span><br><span class="line">160906 10:19:18 [00] Writing xtrabackup_info</span><br><span class="line">160906 10:19:18 [00]       ...done</span><br><span class="line">xtrabackup: Transaction log of lsn (26970807) to (137343534) was copied.</span><br><span class="line">160906 10:19:18 completed OK!</span><br></pre></td></tr></table></figure>
+<p>您应该看到的最后一行显示类似于以下内容，其中的值LSN将是一个取决于您的系统的数字：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup: Transaction log of lsn (&lt;SLN&gt;) to (&lt;LSN&gt;) was copied.</span><br></pre></td></tr></table></figure>
+<p>备份成功后，将在备份目录下创建一个时间戳目录（本例创建的目录为/backup/MySQL/data/2021-03-17_09-05-25），在该目录下存放备份文件。</p>
+<h3 id="准备备份"><a class="markdownIt-Anchor" href="#准备备份"></a> 准备备份</h3>
+<p>使用该选项<code>xtrabackup --backup</code>进行备份后，首先需要准备它以进行还原。在准备好数据文件之前，它们在时间点上是不一致的，因为它们是在程序运行时在不同的时间复制的，并且在此过程中它们可能已被更改。如果您尝试使用这些数据文件启动<code>InnoDB</code>，它将检测到损坏并自身崩溃，以防止您在损坏的数据上运行。该步骤<code>xtrabackup --prepare</code>可以使文件在单个时间瞬间完全一致，因此您可以在它们上运行<code>InnoDB</code>。</p>
+<p>在prepare操作过程中， <strong><code>xtrabackup</code><strong>会 启动一种嵌入其中的经过修改的<code>InnoDB</code>（与之链接的库）。必须进行这些修改才能禁用<code>InnoDB</code>的标准安全检查，例如比较日志文件的大小不合适，这不适用于备份。这些修改仅适用于<code>xtrabackup</code>二进制文件；您不需要修改的<code>InnoDB</code>即可使用</strong><code>xtrabackup</code></strong> 进行备份。</p>
+<p>prepare步骤使用嵌入式<code>InnoDB</code>使用复制的日志文件对复制的数据文件执行故障恢复。该prepare步骤非常简单：您只需运行<code>xtrabackup --prepare</code>选项并告诉它要准备的目录，例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --target-dir=/data/backups/</span><br></pre></td></tr></table></figure>
+<p>完成此操作后，您应该看到带有InnoDB shutdown以下消息的，其中LSN的值再次取决于您的系统。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">InnoDB: Shutdown completed; log sequence number 137345046</span><br><span class="line">160906 11:21:01 completed OK!</span><br></pre></td></tr></table></figure>
+<p>不建议在准备备份时中断<code>xtrabackup</code>过程，因为这可能会导致数据文件损坏并且备份将变得不可用。如果准备过程中断，则不能保证备份的有效性。</p>
+<h3 id="恢复"><a class="markdownIt-Anchor" href="#恢复"></a> 恢复</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file=/opt/MySQL/my.cnf --user=root --password=*** --use-memory=4G --apply-log /backup/MySQL/data/2021-03-17_09-05-25</span><br><span class="line">innobackupex --defaults-file=/opt/MySQL/my.cnf --user=root --password=*** --copy-back /backup/MySQL/data/2021-03-17_09-05-2</span><br></pre></td></tr></table></figure>
+<p>恢复分为两个步骤，第1步是apply-log，为了加快速度，一般建议设置–use-memory，这个步骤完成之后，目录/backup/MySQL/data/2021-03-17_09-05-25下的备份文件已经准备就绪。</p>
+<p>第2步是copy-back，即把备份文件拷贝至原数据目录下。</p>
+<p>恢复完成之后，一定要记得检查数据目录的所有者和权限是否正确。</p>
+<h3 id="增量备份"><a class="markdownIt-Anchor" href="#增量备份"></a> 增量备份</h3>
+<p>注意：<code>innobackupex</code> 增量备份仅针对<code>InnoDB</code>这类支持事务的引擎，对于<code>MyISAM</code>等引擎，则仍然是全备。</p>
+<p>增量备份需要基于全量备份， <strong><code>xtrabackup</code></strong> 备份时写入一个名为<code>xtrabackup_checkpoints</code>到备份的目标目录。该文件包含一行显示 to_lsn，这是备份结束时数据库的LSN。全备的信息如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">backup_type = full-backuped</span><br><span class="line">from_lsn = 0</span><br><span class="line">to_lsn = 563759005914</span><br><span class="line">last_lsn = 563759005914</span><br></pre></td></tr></table></figure>
+<p>假设我们已经有了一个全备（/backup/MySQL/data/2021-03-17_09-05-25）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file=/opt/MySQL/my.cnf --user=root --password=*** --incremental-basedir=/backup/MySQL/data/2021-03-17_09-05-25 --incremental /backup/MySQL/data</span><br></pre></td></tr></table></figure>
+<p>其中–incremental-basedir指向全备目录，–incremental指向增量备份的目录。</p>
+<p>上面语句执行成功之后，会在–incremental执行的目录下创建一个时间戳子目录（本例中为：/backup/MySQL/data/2021-03-17_09-52-37），在该目录下存放着增量备份的所有文件。</p>
+<p>基于该全备的增量备份的信息如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">backup_type = incremental</span><br><span class="line">from_lsn = 563759005914</span><br><span class="line">to_lsn = 574765133284</span><br><span class="line">last_lsn = 574765133284</span><br></pre></td></tr></table></figure>
+<p>从上面可以看出，增量备份的from_lsn正好等于全备的to_lsn。</p>
+<p>那么，我们是否可以在增量备份的基础上再做增量备份呢？答案是肯定的，只要把–incremental-basedir执行上一次增量备份的目录即可，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file=/opt/MySQL/my.cnf  --user=root --password=*** --incremental-basedir=/backup/MySQL/data/2021-03-17_09-52-37 --incremental /backup/MySQL/data</span><br></pre></td></tr></table></figure>
+<p>它的<code>xtrabackup_checkpoints</code>记录着备份信息如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">backup_type = incremental</span><br><span class="line">from_lsn = 574765133284</span><br><span class="line">to_lsn = 574770200380</span><br><span class="line">last_lsn = 574770200950</span><br></pre></td></tr></table></figure>
+<p>可以看到，该增量备份的<code>from_lsn</code>是从上一次增量备份的<code>to_lsn</code>开始的。</p>
+<h3 id="准备增量备份"><a class="markdownIt-Anchor" href="#准备增量备份"></a> 准备增量备份</h3>
+<p>增量备份的<code>xtrabackup --prepare</code>步骤与完全备份的步骤不同。在完全备份中，将执行两种类型的操作以使数据库保持一致：已提交的事务相对于数据文件从日志文件中重放，未提交的事务被回滚。在准备增量备份时，必须跳过未提交事务的回滚，因为在备份时未提交的事务可能正在进行中，并且很有可能将在下一个增量备份中提交。您应该使用该<code>xtrabackup --apply-log-only</code>选项来防止回滚阶段。</p>
+<p>要准备基本备份，您需要照常运行<code>xtrabackup --prepare</code>，但要防止回滚阶段：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --apply-log-only --target-dir=/data/backups/base</span><br></pre></td></tr></table></figure>
+<p>输出应以类似于以下内容的文本结尾：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">InnoDB: Shutdown completed; log sequence number 1626007</span><br><span class="line">161011 12:41:04 completed OK!</span><br></pre></td></tr></table></figure>
+<p>要将第一个增量备份应用于完整备份，请运行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --apply-log-only --target-dir=/data/backups/base --incremental-dir=/data/backups/inc1</span><br></pre></td></tr></table></figure>
+<p>这会将增量文件应用于中的文件/data/backups/base，从而将它们及时向前滚动到增量备份的时间。然后，它像往常一样将重做日志应用于结果。最终数据在中 /data/backups/base，而不在增量目录中。您应该看到类似于以下内容的输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">incremental backup from 1626007 is enabled.</span><br><span class="line">xtrabackup: cd to /data/backups/base</span><br><span class="line">xtrabackup: This target seems to be already prepared with --apply-log-only.</span><br><span class="line">xtrabackup: xtrabackup_logfile detected: size=2097152, start_lsn=(4124244)</span><br><span class="line">...</span><br><span class="line">xtrabackup: page size for /tmp/backups/inc1/ibdata1.delta is 16384 bytes</span><br><span class="line">Applying /tmp/backups/inc1/ibdata1.delta to ./ibdata1...</span><br><span class="line">...</span><br><span class="line">161011 12:45:56 completed OK!</span><br></pre></td></tr></table></figure>
+<h3 id="增量备份恢复"><a class="markdownIt-Anchor" href="#增量备份恢复"></a> 增量备份恢复</h3>
+<p>增量备份的恢复比全备要复杂很多，第一步是在所有备份目录下重做已提交的日志，如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --apply-log --redo-only BASE-DIR</span><br><span class="line">innobackupex --apply-log --redo-only BASE-DIR --incremental-dir=INCREMENTAL-DIR-1</span><br><span class="line">innobackupex --apply-log BASE-DIR --incremental-dir=INCREMENTAL-DIR-2</span><br></pre></td></tr></table></figure>
+<p>其中BASE-DIR是指全备目录，INCREMENTAL-DIR-1是指第一次的增量备份，INCREMENTAL-DIR-2是指第二次的增量备份，以此类推。</p>
+<p>这里要注意的是：最后一步的增量备份并没有–redo-only选项！还有，可以使用–use_memory提高性能。</p>
+<p>以上语句执行成功之后，最终数据在BASE-DIR（即全备目录）下。</p>
+<p>第一步完成之后，我们开始第二步，回滚未完成的日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --apply-log BASE-DIR</span><br></pre></td></tr></table></figure>
+<p>上面执行完之后，BASE-DIR里的备份文件已完全准备就绪，最后一步是拷贝：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --copy-back BASE-DIR</span><br></pre></td></tr></table></figure>
+<p>同样地，拷贝结束之后，记得检查下数据目录的权限是否正确。</p>
+<h2 id="四-自动备份脚本"><a class="markdownIt-Anchor" href="#四-自动备份脚本"></a> 四、自动备份脚本</h2>
+<h3 id="全量脚本"><a class="markdownIt-Anchor" href="#全量脚本"></a> 全量脚本</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">set</span> -e</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 1.声明数据库账号信息等</span></span><br><span class="line">user=root</span><br><span class="line">password=Root@123</span><br><span class="line">LEAVE_DAY_AGO=$(date -d "-30 day" +'%s')</span><br><span class="line"><span class="meta">#</span><span class="bash"> 2.动态创建备份文件的临时存储目录</span></span><br><span class="line">[ -d /home/ap/backupdb ] || mkdir -p /home/ap/backupdb &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">[ -d /home/ap/backup_data/db ] || mkdir -p /home/ap/backup_data/db &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">echo "start copying ..." &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 3.执行备份命令开始数据备份</span></span><br><span class="line">/usr/bin/innobackupex --user="$user" --password="$password" /home/ap/backup_data/db &gt;/home/ap/backupdb/backupdb_log.log 2&gt;&amp;1</span><br><span class="line"><span class="meta">#</span><span class="bash"> 4. 校验备份结果是否通过</span></span><br><span class="line">if [ "$?" != "0" ]; then</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 4.2 备份失败</span></span><br><span class="line">  echo " backup db error !" &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">  exit 1</span><br><span class="line">else</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 4.2 备份成功</span></span><br><span class="line">  echo " end copied! ..." &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">  echo $(ls -lt /home/ap/backup_data/db | grep - | head -n 1 | awk '&#123;print $9&#125;') &gt;/home/ap/backup_data/last_backup_dir_name</span><br><span class="line">fi</span><br><span class="line"><span class="meta">#</span><span class="bash"> 5. 删除 <span class="variable">$&#123;LEAVE_DAY_AGO&#125;</span> 天前的备份目录及子目录、文件</span></span><br><span class="line">path="/home/ap/backup_data/db"</span><br><span class="line">files=$(ls $path)</span><br><span class="line">for filename in $files; do</span><br><span class="line">  file=($&#123;filename:0:10&#125;)</span><br><span class="line">  if</span><br><span class="line">    echo $file | grep -Eq "[0-9]&#123;4&#125;-[0-9]&#123;1,2&#125;-[0-9]&#123;1,2&#125;" &amp;&amp; date -d $file+%Y%m%d &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">  then</span><br><span class="line">    echo $filename 'format is right date' &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">    file_time=$(date -d $file +'%s')</span><br><span class="line">    #校验备份记录是否已过期</span><br><span class="line">    if [$file_time -lt $LEAVE_DAY_AGO ]; then</span><br><span class="line">      rm -rf $path/$filename*</span><br><span class="line">      echo " remove $filename directory " &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">    else</span><br><span class="line">      echo "$filename is valid backup directory" &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">    fi</span><br><span class="line">  else</span><br><span class="line">    echo "date format is invalid" $filename &amp;&gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line">  fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="增量脚本"><a class="markdownIt-Anchor" href="#增量脚本"></a> 增量脚本</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">set</span> -e</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 1.声明数据库账号信息等</span></span><br><span class="line">user=root</span><br><span class="line">password=Root@123</span><br><span class="line">LEAVE_DAY_AGO=$(date -d "-30 day" +'%s')</span><br><span class="line"><span class="meta">#</span><span class="bash"> 2.动态创建临时文件临时存储目录</span></span><br><span class="line">[ -d /home/ap/backupdb ] || mkdir -p /home/ap/backupdb</span><br><span class="line">&amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">[ -d /home/ap/backup_data/db/increment ] || mkdir -p</span><br><span class="line">/home/ap/backup_data/db/increment &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">echo "increment start copying ..." &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 3.搜素并获取上一次全量备份的目录地址</span></span><br><span class="line">last_backup_dir_name=$(cat /home/ap/backup_data/last_backup_dir_name)</span><br><span class="line"><span class="meta">#</span><span class="bash"> 4.执行备份命令开始数据备份</span></span><br><span class="line">/usr/bin/innobackupex --user="$user" --password="$password" --incremental \</span><br><span class="line">/home/ap/backup_data/db/increment/ --incremental-basedir \</span><br><span class="line">/home/ap/backup_data/db/"$last_backup_dir_name" \</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> /home/ap/backupdb/backupdb_increment_log.log 2&gt;&amp;1</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 5.校验备份结果是否超过</span></span><br><span class="line">if [ "$?" != "0" ]; then</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 4.2 备份失败</span></span><br><span class="line">  echo " increment backup db error !" &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">  exit 1</span><br><span class="line">else</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 4.2 备份成功</span></span><br><span class="line">  echo "increment end copied! ..." &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">fi</span><br><span class="line"><span class="meta">#</span><span class="bash"> 6. 删除 <span class="variable">$&#123;LEAVE_DAY_AGO&#125;</span> 天前的备份目录及子目录、文件</span></span><br><span class="line">path="/home/ap/backup_data/db/increment"</span><br><span class="line">files=$(ls $path)</span><br><span class="line">for filename in $files; do</span><br><span class="line">  file=($&#123;filename:0:10&#125;)</span><br><span class="line">  if</span><br><span class="line">    echo $file | grep -Eq "[0-9]&#123;4&#125;-[0-9]&#123;1,2&#125;-[0-9]&#123;1,2&#125;" &amp;&amp; date -d $file+%Y%m%d &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">  then</span><br><span class="line">    echo $filename 'format is right date' &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">    file_time=$(date -d $file +'%s')</span><br><span class="line">    #校验备份记录是否已过期</span><br><span class="line">    if [$file_time -lt $LEAVE_DAY_AGO ]; then</span><br><span class="line">      rm -rf $path/$filename*</span><br><span class="line">      echo " remove $filename directory " &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">    else</span><br><span class="line">      echo "$filename is valid backup directory" &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">    fi</span><br><span class="line">  else</span><br><span class="line">    echo "date format is invalid" $filename &amp;&gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br><span class="line">  fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>设置crontab 调度执行 crontab -e</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 每周一凌晨4点执行全量备份</span></span><br><span class="line">0 4 * * 1 sh /home/ap/backupdb/db_backup.sh &gt;&gt;/home/ap/backupdb/backupdb_log.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 每天凌晨2点执行增量备份</span></span><br><span class="line">0 2 * * * sh /home/ap/backupdb/db_backup_increment.sh &gt;&gt;/home/ap/backupdb/backupdb_increment_log.log</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/" title="Percona-xtrabackup备份MySQL使用详解与原理" target="_blank" rel="external">http://chuanyichuan.github.io/2021/03/17/Percona-XtraBackup使用详解与原理/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/luxiaowan" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="../../../../images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/luxiaowan" target="_blank"><span class="text-dark">串一串</span><small class="ml-1x">浪人</small></a></h3>
+        <div>断舍离</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="../../../04/01/k8s删除namespace提示Terminating/" title="k8s删除namespace提示Terminating"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="../../../02/26/SpringBoot接口返回值出现ClassCastException/" title="SpringBoot接口返回值出现ClassCastException"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/luxiaowan" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="../../../../atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 cc
+        
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="../../../../js/plugin.min.js"></script>
+<script src="../../../../js/application.js"></script>
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '../../../../content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="../../../../js/insight.js"></script>
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>
